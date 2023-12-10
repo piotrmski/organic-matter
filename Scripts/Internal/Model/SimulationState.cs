@@ -27,24 +27,24 @@ namespace Organicmatter.Scripts.Internal.Model
             CellHorizontalConnections = new bool[spaceWidth - 1, spaceHeight];
         }
 
-        public void AddCellConnections(int x, int y, CellConnection connection)
+        public void AddCellConnections(int x, int y, Direction connection)
         {
-            if (connection.HasFlag(CellConnection.Left))
+            if (connection.HasFlag(Direction.Left))
             {
                 CellHorizontalConnections[x - 1, y] = true;
             }
 
-            if (connection.HasFlag(CellConnection.Right))
+            if (connection.HasFlag(Direction.Right))
             {
                 CellHorizontalConnections[x, y] = true;
             }
 
-            if (connection.HasFlag(CellConnection.Bottom))
+            if (connection.HasFlag(Direction.Bottom))
             {
                 CellVerticalConnections[x, y - 1] = true;
             }
 
-            if (connection.HasFlag(CellConnection.Top))
+            if (connection.HasFlag(Direction.Top))
             {
                 CellVerticalConnections[x, y] = true;
             }
@@ -58,23 +58,23 @@ namespace Organicmatter.Scripts.Internal.Model
             if (y < _spaceHeight - 1) CellVerticalConnections[x, y] = false;
         }
 
-        public CellConnection GetCellConnections(int x, int y)
+        public Direction GetCellConnections(int x, int y)
         {
-            CellConnection result = CellConnection.None;
+            Direction result = Direction.None;
 
-            if (x > 0 && CellHorizontalConnections[x - 1, y]) result |= CellConnection.Left;
-            if (x < _spaceWidth - 1 && CellHorizontalConnections[x, y]) result |= CellConnection.Right;
-            if (y > 0 && CellVerticalConnections[x, y - 1]) result |= CellConnection.Bottom;
-            if (y < _spaceHeight - 1 && CellVerticalConnections[x, y]) result |= CellConnection.Top;
+            if (x > 0 && CellHorizontalConnections[x - 1, y]) result |= Direction.Left;
+            if (x < _spaceWidth - 1 && CellHorizontalConnections[x, y]) result |= Direction.Right;
+            if (y > 0 && CellVerticalConnections[x, y - 1]) result |= Direction.Bottom;
+            if (y < _spaceHeight - 1 && CellVerticalConnections[x, y]) result |= Direction.Top;
 
             return result;
         }
 
         public void ForEachCell(ForEachCellAction action)
         {
-            for (int x = 0; x < CellMatrix.GetLength(0); ++x)
+            for (int x = 0; x < _spaceWidth; ++x)
             {
-                for (int y = 0; y < CellMatrix.GetLength(1); ++y)
+                for (int y = 0; y < _spaceHeight; ++y)
                 {
                     action(ref CellMatrix[x, y], x, y);
                 }

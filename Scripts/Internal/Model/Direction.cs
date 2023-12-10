@@ -3,7 +3,7 @@
 namespace Organicmatter.Scripts.Internal.Model
 {
     [Flags]
-    internal enum CellConnection
+    internal enum Direction
     {
         None = 0,
         Left = 1 << 0,

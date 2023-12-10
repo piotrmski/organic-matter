@@ -22,7 +22,10 @@ namespace Organicmatter.Scripts.Internal
             {
                 new Gravity(SimulationState),
                 new Diffusion(SimulationState),
-                new Lighting(SimulationState)
+                new PlantGrowth(SimulationState),
+                new Lighting(SimulationState),
+                //new PlantMetabolism(SimulationState),
+                //new PlantSeating(SimulationState),
             };
         }
 
@@ -66,9 +69,9 @@ namespace Organicmatter.Scripts.Internal
             SimulationState.CellMatrix[x + 1, 32].Type = CellType.PlantGreen;
             SimulationState.CellMatrix[x, 33].Type = CellType.PlantGreen;
 
-            SimulationState.AddCellConnections(x, 29, CellConnection.Top | CellConnection.Bottom);
-            SimulationState.AddCellConnections(x, 30, CellConnection.Top);
-            SimulationState.AddCellConnections(x, 32, CellConnection.Left | CellConnection.Right | CellConnection.Top | CellConnection.Bottom);
+            SimulationState.AddCellConnections(x, 29, Direction.Top | Direction.Bottom);
+            SimulationState.AddCellConnections(x, 30, Direction.Top);
+            SimulationState.AddCellConnections(x, 32, Direction.Left | Direction.Right | Direction.Top | Direction.Bottom);
         }
     }
 }

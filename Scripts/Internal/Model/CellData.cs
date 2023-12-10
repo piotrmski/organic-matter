@@ -41,19 +41,9 @@
             return Type == CellType.PlantRoot || Type == CellType.PlantGreen;
         }
 
-        public bool CanGrowUp()
+        public bool CanPlantSynthesizeHere()
         {
-            return Type == CellType.PlantGreen;
-        }
-
-        public bool CanGrowDown()
-        {
-            return Type == CellType.PlantRoot;
-        }
-
-        public bool CanGrowSideways()
-        {
-            return IsPlant();
+            return Type == CellType.Soil || Type == CellType.Air;
         }
 
         public override string ToString()

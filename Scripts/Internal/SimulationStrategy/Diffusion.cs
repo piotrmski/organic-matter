@@ -58,24 +58,24 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             List<Vector2I> result = new();
 
             CellData lastCellState = _lastCellMatrixState[x, y];
-            CellConnection connections = _simulationState.GetCellConnections(x, y);
+            Direction connections = _simulationState.GetCellConnections(x, y);
 
-            if (x > 0 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x - 1, y], connections.HasFlag(CellConnection.Left)))
+            if (x > 0 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x - 1, y], connections.HasFlag(Direction.Left)))
             {
                 result.Add(new(x - 1, y));
             }
 
-            if (x < _simulationState.CellMatrix.GetLength(0) - 1 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x + 1, y], connections.HasFlag(CellConnection.Right)))
+            if (x < _simulationState.CellMatrix.GetLength(0) - 1 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x + 1, y], connections.HasFlag(Direction.Right)))
             {
                 result.Add(new(x + 1, y));
             }
 
-            if (y > 0 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x, y - 1], connections.HasFlag(CellConnection.Bottom)))
+            if (y > 0 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x, y - 1], connections.HasFlag(Direction.Bottom)))
             {
                 result.Add(new(x, y - 1));
             }
 
-            if (y < _simulationState.CellMatrix.GetLength(1) - 1 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x, y + 1], connections.HasFlag(CellConnection.Top)))
+            if (y < _simulationState.CellMatrix.GetLength(1) - 1 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x, y + 1], connections.HasFlag(Direction.Top)))
             {
                 result.Add(new(x, y + 1));
             }

@@ -44,7 +44,7 @@ namespace Organicmatter.Scripts.Internal
             }
         }
 
-        private void DrawBorder(int x, int displayedY, Color baseColor, CellConnection connections)
+        private void DrawBorder(int x, int displayedY, Color baseColor, Direction connections)
         {
             Color borderColor = baseColor.Darkened(.1f);
 
@@ -53,22 +53,22 @@ namespace Organicmatter.Scripts.Internal
             RenderedImage.SetPixel(x * _cellSize, (displayedY + 1) * _cellSize - 1, borderColor);
             RenderedImage.SetPixel((x + 1) * _cellSize - 1, (displayedY + 1) * _cellSize - 1, borderColor);
 
-            if (!connections.HasFlag(CellConnection.Left))
+            if (!connections.HasFlag(Direction.Left))
             {
                 RenderedImage.FillRect(new(x * _cellSize, displayedY * _cellSize, 1, _cellSize), borderColor);
             }
 
-            if (!connections.HasFlag(CellConnection.Right))
+            if (!connections.HasFlag(Direction.Right))
             {
                 RenderedImage.FillRect(new((x + 1) * _cellSize - 1, displayedY * _cellSize, 1, _cellSize), borderColor);
             }
 
-            if (!connections.HasFlag(CellConnection.Bottom))
+            if (!connections.HasFlag(Direction.Bottom))
             {
                 RenderedImage.FillRect(new(x * _cellSize, (displayedY + 1) * _cellSize - 1, _cellSize, 1), borderColor);
             }
 
-            if (!connections.HasFlag(CellConnection.Top))
+            if (!connections.HasFlag(Direction.Top))
             {
                 RenderedImage.FillRect(new(x * _cellSize, displayedY * _cellSize, _cellSize, 1), borderColor);
             }
