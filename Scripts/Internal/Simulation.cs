@@ -60,18 +60,10 @@ namespace Organicmatter.Scripts.Internal
 
             int x = SimulationState.CellMatrix.GetLength(0) / 2;
 
-            SimulationState.CellMatrix[x, 28].Type = CellType.PlantRoot;
             SimulationState.CellMatrix[x, 29].Type = CellType.PlantRoot;
             SimulationState.CellMatrix[x, 30].Type = CellType.PlantGreen;
-            SimulationState.CellMatrix[x, 31].Type = CellType.PlantGreen;
-            SimulationState.CellMatrix[x, 32].Type = CellType.PlantGreen;
-            SimulationState.CellMatrix[x - 1, 32].Type = CellType.PlantGreen;
-            SimulationState.CellMatrix[x + 1, 32].Type = CellType.PlantGreen;
-            SimulationState.CellMatrix[x, 33].Type = CellType.PlantGreen;
 
-            SimulationState.AddCellConnections(x, 29, Direction.Top | Direction.Bottom);
-            SimulationState.AddCellConnections(x, 30, Direction.Top);
-            SimulationState.AddCellConnections(x, 32, Direction.Left | Direction.Right | Direction.Top | Direction.Bottom);
+            SimulationState.AddCellConnections(x, 29, Direction.Top);
         }
     }
 }

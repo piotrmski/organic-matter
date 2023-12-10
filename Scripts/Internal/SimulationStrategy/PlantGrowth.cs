@@ -34,6 +34,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             _xMax = _spaceWidth - 1;
 
             _yMax = _spaceHeight - 1;
+
+            _rng.Randomize();
         }
 
         public void Advance()
@@ -142,19 +144,19 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                         default: return Direction.Bottom;
                     }
                 case Direction.Left:
+                case Direction.Top | Direction.Left:
                     switch (_rng.Randi() % 2)
                     {
                         case 0: return Direction.Right;
                         default: return Direction.Bottom;
                     }
                 case Direction.Right:
+                case Direction.Top | Direction.Right:
                     switch (_rng.Randi() % 2)
                     {
                         case 0: return Direction.Left;
                         default: return Direction.Bottom;
                     }
-                case Direction.Top | Direction.Left: return Direction.Bottom;
-                case Direction.Top | Direction.Right: return Direction.Bottom;
                 case Direction.Bottom | Direction.Left: return Direction.Right;
                 case Direction.Bottom | Direction.Right: return Direction.Left;
 

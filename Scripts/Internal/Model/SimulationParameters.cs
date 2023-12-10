@@ -4,6 +4,10 @@
     {
         public int WaterMoleculesStartingDistribution = 1000;
 
+        public int CarbonDioxydeStartingAmount = 100000;
+
+        public int OxygenStartingAmount = 100000;
+
         public int DirectLightEnergy = 16;
 
         public int EnergyInSugar = 100;
