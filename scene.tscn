@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://cae7scaoqthml"]
+
+[ext_resource type="Script" path="res://Scripts/SimViewport.cs" id="1_w1efw"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("_debugLabel1", "_debugLabel2")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 250.0
+offset_right = 750.0
+offset_bottom = 500.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_w1efw")
+_debugLabel1 = NodePath("../Label")
+_debugLabel2 = NodePath("../Label2")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 5.0
+offset_right = 245.0
+offset_bottom = 500.0
+justification_flags = 160
+
+[node name="Label2" type="Label" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 755.0
+offset_right = 995.0
+offset_bottom = 500.0
+grow_horizontal = 0
+horizontal_alignment = 2
+justification_flags = 160
