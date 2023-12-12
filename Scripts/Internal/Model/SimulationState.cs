@@ -1,9 +1,6 @@
-﻿using System;
-using static Godot.HttpRequest;
-
-namespace Organicmatter.Scripts.Internal.Model
+﻿namespace Organicmatter.Scripts.Internal.Model
 {
-    internal struct SimulationState
+    internal class SimulationState
     {
         public CellData[,] CellMatrix;
 

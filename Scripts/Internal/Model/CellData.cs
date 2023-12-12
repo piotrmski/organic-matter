@@ -6,13 +6,13 @@
 
         public int LightEnergy;
 
-        public int CapturedLightEnergy;
+        public int AccumulatedLightEnergy;
 
         public int WaterMolecules;
 
         public int SugarMolecules;
 
-        public int AtpMolecules;
+        public int AtpEnergy;
 
         public bool IsSolid()
         {
@@ -48,16 +48,27 @@
 
         public override string ToString()
         {
-            string result = Type.ToString();
+            string result = $"Type = {Type}\n";
 
             if (Type == CellType.Air)
             {
-                result += $"\nLight energy = {LightEnergy}";
+                result += $"Light energy = {LightEnergy}\n";
             }
 
             if (CanDiffuse())
             {
-                result += $"\nWater molecules = {WaterMolecules}";
+                result += $"Water molecules = {WaterMolecules}\n";
+                result += $"Sugar molecules = {SugarMolecules}\n";
+            }
+
+            if (IsPlant())
+            {
+                result += $"Energy in ATP = {AtpEnergy}\n";
+            }
+
+            if (Type == CellType.PlantGreen)
+            {
+                result += $"Light energy accumulated = {LightEnergy}\n";
             }
 
             return result;

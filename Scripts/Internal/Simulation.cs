@@ -24,8 +24,7 @@ namespace Organicmatter.Scripts.Internal
                 new Diffusion(SimulationState),
                 new PlantGrowth(SimulationState),
                 new Lighting(SimulationState),
-                //new PlantMetabolism(SimulationState),
-                //new PlantSeating(SimulationState),
+                new PlantMetabolism(SimulationState)
             };
         }
 
@@ -36,15 +35,6 @@ namespace Organicmatter.Scripts.Internal
 
         private void PrepareInitialState()
         {
-            //for (int x = 0; x < SimulationState.CellMatrix.GetLength(0); x++)
-            //{
-            //    for (int y = 0; y < SimulationState.CellMatrix.GetLength(1); y++)
-            //    {
-            //        SimulationState.CellMatrix[x, y].Type = (x - 50) * (x - 50) + (y - 50) * (y - 50) < 35 * 35 ? CellType.Soil : CellType.Air;
-            //        SimulationState.CellMatrix[x, y].MoisturePpm = (x - 50) * (x - 50) + (y - 50) * (y - 50) < 25 * 25 ? 1000000 : 0;
-            //    }
-            //}
-
             SimulationState.ForEachCell((ref CellData cellData, int x, int y) =>
             {
                 if (y < 30)
@@ -61,7 +51,9 @@ namespace Organicmatter.Scripts.Internal
             int x = SimulationState.CellMatrix.GetLength(0) / 2;
 
             SimulationState.CellMatrix[x, 29].Type = CellType.PlantRoot;
+            SimulationState.CellMatrix[x, 29].AtpEnergy = 100;
             SimulationState.CellMatrix[x, 30].Type = CellType.PlantGreen;
+            SimulationState.CellMatrix[x, 30].AtpEnergy = 100;
 
             SimulationState.AddCellConnections(x, 29, Direction.Top);
         }

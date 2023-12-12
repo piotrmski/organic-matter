@@ -27,7 +27,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             _lastCellMatrixState = new CellData[_spaceWidth, _spaceHeight];
         }
 
-        public void Advance()
+        public void Advance() // TODO diffuse sugar
         {
             Array.Copy(_simulationState.CellMatrix, _lastCellMatrixState, _spaceWidth * _spaceHeight);
 

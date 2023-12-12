@@ -126,17 +126,45 @@ public partial class SimViewport : TextureRect
 	{
 		if (_debugLabel1 == null) { return; }
 
-		if (_hoveredCell == null)
+		int waterSum = 0;
+		int sugarSum = 0;
+		int celluloseSum = 0;
+
+		_simulation.SimulationState.ForEachCell((ref CellData cell) =>
 		{
-			int sum = 0;
-			_simulation.SimulationState.ForEachCell((ref CellData cell) => sum += cell.WaterMolecules);
+			waterSum += cell.WaterMolecules;
+			sugarSum += cell.SugarMolecules;
+			celluloseSum += cell.IsPlant() || cell.Type == CellType.Soil ? 1 : 0;
+		});
 
-			_debugLabel1.Text = $"Total moisture content = {sum}";
+		int carbonAtoms = _simulation.SimulationState.CarbonDioxydeMolecules +
+            sugarSum * 6 +
+			celluloseSum * 6 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
 
-			return;
+		int oxygenAtoms = _simulation.SimulationState.OxygenMolecules * 2 +
+			_simulation.SimulationState.CarbonDioxydeMolecules * 2 +
+			waterSum +
+			sugarSum * 6 +
+			celluloseSum * 5 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
+
+		int hydrogenAtoms = waterSum * 2 +
+			sugarSum * 12 +
+			celluloseSum * 12 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
+
+        _debugLabel1.Text = $"Total water molecules = {waterSum}\n" +
+			$"Total sugar molecules = {sugarSum}\n" +
+            $"Total cellulose cells = {celluloseSum}\n" +
+            $"Total carbon atoms = {carbonAtoms}\n" +
+            $"Total oxygen atoms = {oxygenAtoms}\n" +
+            $"Total hydrogen atoms = {hydrogenAtoms}\n" +
+            $"Carbon dioxyde molecules in atmosphere = {_simulation.SimulationState.CarbonDioxydeMolecules}\n" +
+			$"Oxygen molecules in atmosphere = {_simulation.SimulationState.OxygenMolecules}\n";
+
+
+		if (_hoveredCell != null)
+		{
+			_debugLabel1.Text += $"X = {_hoveredCell.Value.X} Y = {_hoveredCell.Value.Y}\n" +
+				$"{_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y]}";
 		}
-
-		_debugLabel1.Text = $"X = {_hoveredCell.Value.X} Y = {_hoveredCell.Value.Y}\n" +
-			$"{_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y]}";
 	}
 }
