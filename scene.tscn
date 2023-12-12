@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://cae7scaoqthml"]
+[gd_scene load_steps=4 format=3 uid="uid://cae7scaoqthml"]
 
 [ext_resource type="Script" path="res://Scripts/SimViewport.cs" id="1_w1efw"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_dyhtb"]
+font_size = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_f0mgi"]
+font_size = 12
 
 [node name="Node2D" type="Node2D"]
 
@@ -10,8 +16,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 250.0
-offset_right = 750.0
+offset_left = 300.0
+offset_right = 800.0
 offset_bottom = 500.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -23,6 +29,7 @@ _debugLabel2 = NodePath("../Label2")
 offset_left = 5.0
 offset_right = 245.0
 offset_bottom = 500.0
+label_settings = SubResource("LabelSettings_dyhtb")
 justification_flags = 160
 
 [node name="Label2" type="Label" parent="."]
@@ -33,5 +40,6 @@ offset_left = 755.0
 offset_right = 995.0
 offset_bottom = 500.0
 grow_horizontal = 0
+label_settings = SubResource("LabelSettings_f0mgi")
 horizontal_alignment = 2
 justification_flags = 160

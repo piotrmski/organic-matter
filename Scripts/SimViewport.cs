@@ -38,9 +38,9 @@ public partial class SimViewport : TextureRect
 	{
 		_simulation = new Simulation(_spaceWidth, _spaceHeight);
 
-        _renderer = new Renderer(_simulation.SimulationState);
+		_renderer = new Renderer(_simulation.SimulationState);
 
-        _viewportTexture.SetImage(_renderer.RenderedImage);
+		_viewportTexture.SetImage(_renderer.RenderedImage);
 
 		Texture = _viewportTexture;
 
@@ -138,7 +138,7 @@ public partial class SimViewport : TextureRect
 		});
 
 		int carbonAtoms = _simulation.SimulationState.CarbonDioxydeMolecules +
-            sugarSum * 6 +
+			sugarSum * 6 +
 			celluloseSum * 6 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
 
 		int oxygenAtoms = _simulation.SimulationState.OxygenMolecules * 2 +
@@ -151,14 +151,14 @@ public partial class SimViewport : TextureRect
 			sugarSum * 12 +
 			celluloseSum * 12 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
 
-        _debugLabel1.Text = $"Total water molecules = {waterSum}\n" +
+		_debugLabel1.Text = $"Total water molecules = {waterSum}\n" +
 			$"Total sugar molecules = {sugarSum}\n" +
-            $"Total cellulose cells = {celluloseSum}\n" +
-            $"Total carbon atoms = {carbonAtoms}\n" +
-            $"Total oxygen atoms = {oxygenAtoms}\n" +
-            $"Total hydrogen atoms = {hydrogenAtoms}\n" +
-            $"Carbon dioxyde molecules in atmosphere = {_simulation.SimulationState.CarbonDioxydeMolecules}\n" +
-			$"Oxygen molecules in atmosphere = {_simulation.SimulationState.OxygenMolecules}\n";
+			$"Total cellulose cells = {celluloseSum}\n\n" +
+			$"Total carbon atoms = {carbonAtoms}\n" +
+			$"Total oxygen atoms = {oxygenAtoms}\n" +
+			$"Total hydrogen atoms = {hydrogenAtoms}\n\n" +
+			$"CO2 molecules in the atmosphere = {_simulation.SimulationState.CarbonDioxydeMolecules}\n" +
+			$"O2 molecules in the atmosphere = {_simulation.SimulationState.OxygenMolecules}\n\n";
 
 
 		if (_hoveredCell != null)
