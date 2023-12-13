@@ -93,7 +93,7 @@ public partial class SimViewport : TextureRect
 	{
 		if (_debugLabel1 == null) { return; }
 
-		int waterSum = 0;
+		int waterSum = _simulation.SimulationState.AtmosphericWaterMolecules;
 		int glucoseSum = 0;
 		int celluloseSum = 0;
 
@@ -125,7 +125,8 @@ public partial class SimViewport : TextureRect
 			$"Total oxygen atoms = {oxygenAtoms}\n" +
 			$"Total hydrogen atoms = {hydrogenAtoms}\n\n" +
 			$"CO2 molecules in the atmosphere = {_simulation.SimulationState.CarbonDioxydeMolecules}\n" +
-			$"O2 molecules in the atmosphere = {_simulation.SimulationState.OxygenMolecules}\n\n";
+			$"O2 molecules in the atmosphere = {_simulation.SimulationState.OxygenMolecules}\n" +
+            $"Water molecules in the atmosphere = {_simulation.SimulationState.AtmosphericWaterMolecules}\n\n";
 
 
 		if (_hoveredCell != null)

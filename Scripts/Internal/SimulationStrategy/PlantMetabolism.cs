@@ -65,14 +65,15 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         private void Photosynthesize(ref CellData cell)
         {
             if (cell.AccumulatedLightEnergy < _simulationState.Parameters.EnergyInGlucose ||
-                cell.WaterMolecules < 6 ||
+                cell.WaterMolecules < (6 + _simulationState.Parameters.WaterTranspiredInPhotosynthesis) ||
                 _simulationState.CarbonDioxydeMolecules < 6) { return; }
 
             cell.GlucoseMolecules += 1;
             _simulationState.OxygenMolecules += 6;
             cell.AccumulatedLightEnergy -= _simulationState.Parameters.EnergyInGlucose;
-            cell.WaterMolecules -= 6;
+            cell.WaterMolecules -= (6 + _simulationState.Parameters.WaterTranspiredInPhotosynthesis);
             _simulationState.CarbonDioxydeMolecules -= 6;
+            _simulationState.AtmosphericWaterMolecules += _simulationState.Parameters.WaterTranspiredInPhotosynthesis;
         }
 
         private void Respire(ref CellData cell)
@@ -89,9 +90,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool IsAtpLow(CellData cell)
         {
-            int energyInGlucose = cell.GlucoseMolecules * _simulationState.Parameters.EnergyInGlucose;
-
-            return energyInGlucose > cell.AtpEnergy;
+            return cell.AtpEnergy < _simulationState.Parameters.EnergyToSynthesizeCellulose;
         }
 
         private void ConsumeAtpOrDie(ref CellData cell, int x, int y)

@@ -12,6 +12,8 @@
 
         public int OxygenMolecules;
 
+        public int AtmosphericWaterMolecules;
+
         public SimulationParameters Parameters = new();
 
         private int _spaceWidth;
