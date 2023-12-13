@@ -41,7 +41,9 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             _simulationState.ForEachCell((ref CellData cell, int x, int y) =>
             {
-                if (!cell.IsPlant() || cell.AtpEnergy < _simulationState.Parameters.EnergyToSynthesizeCellulose) { return; }
+                if (!cell.IsPlant() ||
+                    cell.AtpEnergy < _simulationState.Parameters.EnergyToSynthesizeCellulose ||
+                    cell.GlucoseMolecules < _simulationState.Parameters.GlucoseInCellulose) { return; }
 
                 Direction connections = _simulationState.GetCellConnections(x, y);
 
@@ -197,8 +199,10 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             }
 
             _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type = type;
-            _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].AtpEnergy = (int) (.5 * _simulationState.CellMatrix[sourceX, sourceY].AtpEnergy);
+            _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].AtpEnergy = _simulationState.CellMatrix[sourceX, sourceY].AtpEnergy / 2;
             _simulationState.CellMatrix[sourceX, sourceY].AtpEnergy -= _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].AtpEnergy;
+            _simulationState.CellMatrix[sourceX, sourceY].GlucoseMolecules -= _simulationState.Parameters.GlucoseInCellulose;
+            _simulationState.OxygenMolecules += _simulationState.Parameters.GlucoseInCellulose / 2;
             _simulationState.AddCellConnections(sourceX, sourceY, directionOfGrowth);
         }
     }

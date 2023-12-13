@@ -10,7 +10,7 @@
 
         public int WaterMolecules;
 
-        public int SugarMolecules;
+        public int GlucoseMolecules;
 
         public int AtpEnergy;
 
@@ -58,7 +58,7 @@
             if (CanDiffuse())
             {
                 result += $"Water molecules = {WaterMolecules}\n";
-                result += $"Sugar molecules = {SugarMolecules}\n";
+                result += $"Glucose molecules = {GlucoseMolecules}\n";
             }
 
             if (IsPlant())

@@ -1,6 +1,4 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
-using Godot;
-using System;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy
 {
@@ -44,7 +42,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
                 if (IsAtpLow(cell)) { Respire(ref cell); }
 
-                ConsumeAtpOrDie(ref cell);
+                ConsumeAtpOrDie(ref cell, x, y);
             });
         }
 
@@ -61,42 +59,42 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             if (y == _yMax) { cell.AccumulatedLightEnergy += _simulationState.Parameters.DirectLightEnergy; }
             else if (_simulationState.CellMatrix[x, y + 1].Type == CellType.Air) { cell.AccumulatedLightEnergy += _simulationState.CellMatrix[x, y + 1].LightEnergy; }
 
-            if (cell.AccumulatedLightEnergy > _simulationState.Parameters.EnergyInSugar) { cell.AccumulatedLightEnergy = _simulationState.Parameters.EnergyInSugar; }
+            if (cell.AccumulatedLightEnergy > _simulationState.Parameters.EnergyInGlucose) { cell.AccumulatedLightEnergy = _simulationState.Parameters.EnergyInGlucose; }
         }
 
         private void Photosynthesize(ref CellData cell)
         {
-            if (cell.AccumulatedLightEnergy < _simulationState.Parameters.EnergyInSugar ||
+            if (cell.AccumulatedLightEnergy < _simulationState.Parameters.EnergyInGlucose ||
                 cell.WaterMolecules < 6 ||
                 _simulationState.CarbonDioxydeMolecules < 6) { return; }
 
-            cell.SugarMolecules += 1;
+            cell.GlucoseMolecules += 1;
             _simulationState.OxygenMolecules += 6;
-            cell.AccumulatedLightEnergy -= _simulationState.Parameters.EnergyInSugar;
+            cell.AccumulatedLightEnergy -= _simulationState.Parameters.EnergyInGlucose;
             cell.WaterMolecules -= 6;
             _simulationState.CarbonDioxydeMolecules -= 6;
         }
 
         private void Respire(ref CellData cell)
         {
-            if (cell.SugarMolecules < 1 ||
+            if (cell.GlucoseMolecules < 1 ||
                 _simulationState.OxygenMolecules < 6) { return; }
 
-            cell.SugarMolecules -= 1;
+            cell.GlucoseMolecules -= 1;
             _simulationState.OxygenMolecules -= 6;
-            cell.AtpEnergy += _simulationState.Parameters.EnergyInSugar;
+            cell.AtpEnergy += _simulationState.Parameters.EnergyInGlucose;
             cell.WaterMolecules += 6;
             _simulationState.CarbonDioxydeMolecules += 6;
         }
 
         private bool IsAtpLow(CellData cell)
         {
-            int energyInSugar = cell.SugarMolecules * _simulationState.Parameters.EnergyInSugar;
+            int energyInGlucose = cell.GlucoseMolecules * _simulationState.Parameters.EnergyInGlucose;
 
-            return energyInSugar > cell.AtpEnergy;
+            return energyInGlucose > cell.AtpEnergy;
         }
 
-        private void ConsumeAtpOrDie(ref CellData cell)
+        private void ConsumeAtpOrDie(ref CellData cell, int x, int y)
         {
             if (cell.AtpEnergy > 0)
             {
@@ -105,6 +103,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             else
             {
                 cell.Type = CellType.Soil;
+                _simulationState.RemoveCellConnections(x, y);
             }
         }
     }

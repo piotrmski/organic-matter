@@ -32,8 +32,6 @@ public partial class SimViewport : TextureRect
 
 	private System.Diagnostics.Stopwatch watch = new();
 
-	private AirInSoilSearch _airInSoilSearch; // todo temporary
-
 	public override void _Ready()
 	{
 		_simulation = new Simulation(_spaceWidth, _spaceHeight);
@@ -43,9 +41,6 @@ public partial class SimViewport : TextureRect
 		_viewportTexture.SetImage(_renderer.RenderedImage);
 
 		Texture = _viewportTexture;
-
-		_airInSoilSearch = new AirInSoilSearch(_simulation.SimulationState); // todo temporary
-
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -91,34 +86,6 @@ public partial class SimViewport : TextureRect
 				UpdateHoveredCellInfo();
 
 				return;
-
-			case InputEventMouseButton mouseButtonEvent: // Debug interaction
-				if (_hoveredCell == null || !mouseButtonEvent.IsPressed()) { return; }
-
-				CellData newCell = new()
-				{
-					Type = mouseButtonEvent.ButtonIndex == MouseButton.Left ? CellType.PlantGreen : CellType.PlantRoot
-				};
-
-				if (_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y].Type == CellType.Air)
-				{
-					_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y] = newCell;
-					return;
-				}
-
-				if (_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y].Type == CellType.Soil)
-				{
-					Vector2I? airLocation = _airInSoilSearch.FindNearestAir(_hoveredCell.Value.X, _hoveredCell.Value.Y);
-
-					if (airLocation == null) { return; }
-
-					(_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y], _simulation.SimulationState.CellMatrix[airLocation.Value.X, airLocation.Value.Y]) =
-						(_simulation.SimulationState.CellMatrix[airLocation.Value.X, airLocation.Value.Y], _simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y]);
-
-					_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y] = newCell;
-				}
-
-				return;
 		}
 	}
 
@@ -127,32 +94,32 @@ public partial class SimViewport : TextureRect
 		if (_debugLabel1 == null) { return; }
 
 		int waterSum = 0;
-		int sugarSum = 0;
+		int glucoseSum = 0;
 		int celluloseSum = 0;
 
 		_simulation.SimulationState.ForEachCell((ref CellData cell) =>
 		{
 			waterSum += cell.WaterMolecules;
-			sugarSum += cell.SugarMolecules;
+			glucoseSum += cell.GlucoseMolecules;
 			celluloseSum += cell.IsPlant() || cell.Type == CellType.Soil ? 1 : 0;
 		});
 
 		int carbonAtoms = _simulation.SimulationState.CarbonDioxydeMolecules +
-			sugarSum * 6 +
+			glucoseSum * 6 +
 			celluloseSum * 6 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
 
 		int oxygenAtoms = _simulation.SimulationState.OxygenMolecules * 2 +
 			_simulation.SimulationState.CarbonDioxydeMolecules * 2 +
 			waterSum +
-			sugarSum * 6 +
+			glucoseSum * 6 +
 			celluloseSum * 5 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
 
 		int hydrogenAtoms = waterSum * 2 +
-			sugarSum * 12 +
+			glucoseSum * 12 +
 			celluloseSum * 12 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
 
 		_debugLabel1.Text = $"Total water molecules = {waterSum}\n" +
-			$"Total sugar molecules = {sugarSum}\n" +
+			$"Total glucose molecules = {glucoseSum}\n" +
 			$"Total cellulose cells = {celluloseSum}\n\n" +
 			$"Total carbon atoms = {carbonAtoms}\n" +
 			$"Total oxygen atoms = {oxygenAtoms}\n" +

@@ -31,7 +31,11 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             Array.Copy(_simulationState.CellMatrix, _lastCellMatrixState, _spaceWidth * _spaceHeight);
 
-            _simulationState.ForEachCell((ref CellData cell) => cell.WaterMolecules = 0);
+            _simulationState.ForEachCell((ref CellData cell) =>
+            {
+                cell.WaterMolecules = 0;
+                cell.GlucoseMolecules = 0;
+            });
 
             _simulationState.ForEachCell((ref CellData cell, int x, int y) =>
             {
@@ -42,14 +46,25 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                 if (!neighborsToDiffuseTo.Any())
                 {
                     cell.WaterMolecules += _lastCellMatrixState[x, y].WaterMolecules;
+                    cell.GlucoseMolecules += _lastCellMatrixState[x, y].GlucoseMolecules;
                     return;
                 }
 
-                int moistureToDiffuseOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules / 5;
-                int moistureToRemain = _lastCellMatrixState[x, y].WaterMolecules - moistureToDiffuseOutToANeighbor * neighborsToDiffuseTo.Count;
+                int waterToDiffuseOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules / 5;
+                int glucoseToGetCarriedOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules == 0 ?
+                    0 : (_lastCellMatrixState[x, y].GlucoseMolecules * waterToDiffuseOutToANeighbor) / _lastCellMatrixState[x, y].WaterMolecules;
 
-                neighborsToDiffuseTo.ForEach(x => _simulationState.CellMatrix[x.X, x.Y].WaterMolecules += moistureToDiffuseOutToANeighbor);
-                cell.WaterMolecules += moistureToRemain;
+                int waterToRemain = _lastCellMatrixState[x, y].WaterMolecules - waterToDiffuseOutToANeighbor * neighborsToDiffuseTo.Count;
+                int glucoseToRemain = _lastCellMatrixState[x, y].GlucoseMolecules - glucoseToGetCarriedOutToANeighbor * neighborsToDiffuseTo.Count;
+
+                neighborsToDiffuseTo.ForEach(x =>
+                {
+                    _simulationState.CellMatrix[x.X, x.Y].WaterMolecules += waterToDiffuseOutToANeighbor;
+                    _simulationState.CellMatrix[x.X, x.Y].GlucoseMolecules += glucoseToGetCarriedOutToANeighbor;
+                });
+
+                cell.WaterMolecules += waterToRemain;
+                cell.GlucoseMolecules += glucoseToRemain;
             });
         }
 
