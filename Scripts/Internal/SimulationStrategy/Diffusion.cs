@@ -27,7 +27,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             _lastCellMatrixState = new CellData[_spaceWidth, _spaceHeight];
         }
 
-        public void Advance() // TODO diffuse sugar
+        public void Advance()
         {
             Array.Copy(_simulationState.CellMatrix, _lastCellMatrixState, _spaceWidth * _spaceHeight);
 
@@ -50,7 +50,9 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     return;
                 }
 
-                int waterToDiffuseOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules / 5;
+                int numberOfCellsToDiffuseBetween = cell.IsPlant() ? 4 : 5;
+
+                int waterToDiffuseOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules / numberOfCellsToDiffuseBetween;
                 int glucoseToGetCarriedOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules == 0 ?
                     0 : (_lastCellMatrixState[x, y].GlucoseMolecules * waterToDiffuseOutToANeighbor) / _lastCellMatrixState[x, y].WaterMolecules;
 

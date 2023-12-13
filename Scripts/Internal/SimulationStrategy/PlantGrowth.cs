@@ -160,6 +160,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     }
                 case Direction.Bottom | Direction.Left: return Direction.Right;
                 case Direction.Bottom | Direction.Right: return Direction.Left;
+                case Direction.Left | Direction.Right: return Direction.Bottom;
 
                 default: return Direction.None;
             }

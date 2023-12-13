@@ -67,7 +67,7 @@ namespace Organicmatter.Scripts.Internal.Helpers
 
         private bool IsAir(int x, int y)
         {
-            return x > 0 && x < _spaceWidth && y < _spaceHeight && _simulationState.CellMatrix[x, y].Type == CellType.Air; // Downwards check intentionally omitted
+            return x >= 0 && x < _spaceWidth && y < _spaceHeight && _simulationState.CellMatrix[x, y].Type == CellType.Air; // Downwards check intentionally omitted
         }
 
         private int CoordinatesToIndex(int x, int y)

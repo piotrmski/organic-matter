@@ -65,15 +65,14 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         private void Photosynthesize(ref CellData cell)
         {
             if (cell.AccumulatedLightEnergy < _simulationState.Parameters.EnergyInGlucose ||
-                cell.WaterMolecules < (6 + _simulationState.Parameters.WaterTranspiredInPhotosynthesis) ||
+                cell.WaterMolecules < 6 ||
                 _simulationState.CarbonDioxydeMolecules < 6) { return; }
 
             cell.GlucoseMolecules += 1;
             _simulationState.OxygenMolecules += 6;
             cell.AccumulatedLightEnergy -= _simulationState.Parameters.EnergyInGlucose;
-            cell.WaterMolecules -= (6 + _simulationState.Parameters.WaterTranspiredInPhotosynthesis);
+            cell.WaterMolecules -= 6;
             _simulationState.CarbonDioxydeMolecules -= 6;
-            _simulationState.AtmosphericWaterMolecules += _simulationState.Parameters.WaterTranspiredInPhotosynthesis;
         }
 
         private void Respire(ref CellData cell)

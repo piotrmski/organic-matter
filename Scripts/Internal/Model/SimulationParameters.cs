@@ -12,8 +12,6 @@
 
         public int EnergyInGlucose = 100;
 
-        public int WaterTranspiredInPhotosynthesis = 10;
-
         public int GlucoseInCellulose = 10; // Must be even
 
         public int EnergyToSynthesizeCellulose = 500;
