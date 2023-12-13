@@ -14,6 +14,10 @@
 
         public int AtpEnergy;
 
+        public int TicksSinceLastPhotosynthesis;
+
+        public int TicksSinceLastRespiration;
+
         public bool IsSolid()
         {
             return Type != CellType.Air;

@@ -1,4 +1,5 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
+using System;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy
 {
@@ -31,6 +32,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             _simulationState.ForEachCell((ref CellData cell, int x, int y) =>
             {
+                IncrementCounters(ref cell);
+
                 if (!cell.IsPlant()) { return; }
 
                 if (cell.Type == CellType.PlantGreen)
@@ -73,6 +76,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             cell.AccumulatedLightEnergy -= _simulationState.Parameters.EnergyInGlucose;
             cell.WaterMolecules -= 6;
             _simulationState.CarbonDioxydeMolecules -= 6;
+
+            cell.TicksSinceLastPhotosynthesis = 0;
         }
 
         private void Respire(ref CellData cell)
@@ -85,6 +90,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             cell.AtpEnergy += _simulationState.Parameters.EnergyInGlucose;
             cell.WaterMolecules += 6;
             _simulationState.CarbonDioxydeMolecules += 6;
+
+            cell.TicksSinceLastRespiration = 0;
         }
 
         private bool IsAtpLow(CellData cell)
@@ -103,6 +110,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                 cell.Type = CellType.Soil;
                 _simulationState.RemoveCellConnections(x, y);
             }
+        }
+
+        private static void IncrementCounters(ref CellData cell)
+        {
+            if (cell.TicksSinceLastPhotosynthesis < int.MaxValue) cell.TicksSinceLastPhotosynthesis += 1;
+            if (cell.TicksSinceLastRespiration < int.MaxValue) cell.TicksSinceLastRespiration += 1;
         }
     }
 }

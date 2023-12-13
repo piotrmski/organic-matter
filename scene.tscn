@@ -1,6 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cae7scaoqthml"]
+[gd_scene load_steps=5 format=3 uid="uid://cae7scaoqthml"]
 
 [ext_resource type="Script" path="res://Scripts/SimViewport.cs" id="1_w1efw"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_gxl1x"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_dyhtb"]
 font_size = 12
@@ -10,7 +12,7 @@ font_size = 12
 
 [node name="Node2D" type="Node2D"]
 
-[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("_debugLabel1", "_debugLabel2")]
+[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("_debugLabel1", "_debugLabel2", "_renderModeList")]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -21,13 +23,15 @@ offset_right = 800.0
 offset_bottom = 500.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = SubResource("PlaceholderTexture2D_gxl1x")
 script = ExtResource("1_w1efw")
 _debugLabel1 = NodePath("../Label")
 _debugLabel2 = NodePath("../Label2")
+_renderModeList = NodePath("../ModeSelection")
 
 [node name="Label" type="Label" parent="."]
 offset_left = 5.0
-offset_right = 245.0
+offset_right = 302.0
 offset_bottom = 500.0
 label_settings = SubResource("LabelSettings_dyhtb")
 justification_flags = 160
@@ -36,10 +40,33 @@ justification_flags = 160
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = 755.0
+offset_left = 821.0
 offset_right = 995.0
 offset_bottom = 500.0
 grow_horizontal = 0
 label_settings = SubResource("LabelSettings_f0mgi")
 horizontal_alignment = 2
 justification_flags = 160
+
+[node name="ModeSelection" type="ItemList" parent="."]
+offset_left = 830.0
+offset_top = 303.0
+offset_right = 967.0
+offset_bottom = 473.0
+focus_mode = 0
+allow_search = false
+auto_height = true
+item_count = 6
+item_0/text = "Default"
+item_1/text = "Water"
+item_2/text = "Glucose"
+item_3/text = "ATP"
+item_4/text = "Photosynthesis"
+item_5/text = "Respiration"
+
+[node name="Label3" type="Label" parent="."]
+offset_left = 834.0
+offset_top = 271.0
+offset_right = 939.0
+offset_bottom = 294.0
+text = "Display mode"

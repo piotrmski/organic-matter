@@ -2,6 +2,7 @@ using Godot;
 using Organicmatter.Scripts.Internal;
 using Organicmatter.Scripts.Internal.Helpers;
 using Organicmatter.Scripts.Internal.Model;
+using Organicmatter.Scripts.Internal.RenderingStrategy;
 
 public partial class SimViewport : TextureRect
 {
@@ -20,7 +21,10 @@ public partial class SimViewport : TextureRect
 	[Export]
 	private Label _debugLabel2;
 
-	private Renderer _renderer;
+	[Export]
+	private ItemList _renderModeList;
+
+	private IRenderer _renderer;
 
 	private ImageTexture _viewportTexture = new();
 
@@ -36,11 +40,13 @@ public partial class SimViewport : TextureRect
 	{
 		_simulation = new Simulation(_spaceWidth, _spaceHeight);
 
-		_renderer = new Renderer(_simulation.SimulationState);
-
-		_viewportTexture.SetImage(_renderer.RenderedImage);
+		_renderModeList.Select(0);
+		
+		UpdateRendererByListIndex(0);
 
 		Texture = _viewportTexture;
+
+		_renderModeList.ItemSelected += UpdateRendererByListIndex;
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -133,5 +139,25 @@ public partial class SimViewport : TextureRect
 			_debugLabel1.Text += $"X = {_hoveredCell.Value.X} Y = {_hoveredCell.Value.Y}\n" +
 				$"{_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y]}";
 		}
+	}
+
+	private IRenderer GetRendererByListIndex(long listIndex)
+	{
+		return listIndex switch
+		{
+			0 => new DefaultRenderer(_simulation.SimulationState),
+			1 => new WaterRenderer(_simulation.SimulationState),
+			2 => new GlucoseRenderer(_simulation.SimulationState),
+			3 => new AtpRenderer(_simulation.SimulationState),
+			4 => new PhotosynthesisRenderer(_simulation.SimulationState),
+			_ => new RespirationRenderer(_simulation.SimulationState),
+		};
+	}
+
+	private void UpdateRendererByListIndex(long listIndex)
+	{
+		_renderer = GetRendererByListIndex(listIndex);
+
+		_viewportTexture.SetImage(_renderer.RenderedImage);
 	}
 }

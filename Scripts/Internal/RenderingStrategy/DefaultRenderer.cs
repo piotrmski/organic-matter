@@ -2,9 +2,9 @@
 using Organicmatter.Scripts.Internal.Model;
 using System;
 
-namespace Organicmatter.Scripts.Internal
+namespace Organicmatter.Scripts.Internal.RenderingStrategy
 {
-    internal class Renderer
+    internal class DefaultRenderer : IRenderer
     {
         private SimulationState _simulationState;
 
@@ -14,7 +14,7 @@ namespace Organicmatter.Scripts.Internal
 
         public Image RenderedImage { get; private set; }
 
-        public Renderer(SimulationState simulationState)
+        public DefaultRenderer(SimulationState simulationState)
         {
             _simulationState = simulationState;
 
@@ -86,7 +86,7 @@ namespace Organicmatter.Scripts.Internal
                     baseColor = new(0xaaccffff);
                     double a = Math.Log2(cell.LightEnergy + 1);
                     double b = Math.Log2(_simulationState.Parameters.DirectLightEnergy);
-                    return baseColor.Darkened((float) ((b - a) / (2f * b)));
+                    return baseColor.Darkened((float)((b - a) / (2f * b)));
                 case CellType.PlantRoot:
                     baseColor = new(0xddccaaff);
                     break;
