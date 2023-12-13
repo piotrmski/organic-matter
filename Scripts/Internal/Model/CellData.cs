@@ -68,7 +68,7 @@
 
             if (Type == CellType.PlantGreen)
             {
-                result += $"Light energy accumulated = {LightEnergy}\n";
+                result += $"Light energy accumulated = {AccumulatedLightEnergy}\n";
             }
 
             return result;
