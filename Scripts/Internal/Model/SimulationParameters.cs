@@ -24,6 +24,8 @@
 
         public int BacteriaEnergyConsumptionPerTick = 1;
 
+        public int MinimumWaterMoleculesToCarryOneMoleculeOfGlucose = 5;
+
         public SimulationParameters() { }
     }
 }

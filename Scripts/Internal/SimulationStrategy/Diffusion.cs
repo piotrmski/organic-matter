@@ -56,6 +56,11 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                 int glucoseToGetCarriedOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules == 0 ?
                     0 : (_lastCellMatrixState[x, y].GlucoseMolecules * waterToDiffuseOutToANeighbor) / _lastCellMatrixState[x, y].WaterMolecules;
 
+                if (glucoseToGetCarriedOutToANeighbor > waterToDiffuseOutToANeighbor * _simulationState.Parameters.MinimumWaterMoleculesToCarryOneMoleculeOfGlucose)
+                {
+                    glucoseToGetCarriedOutToANeighbor = waterToDiffuseOutToANeighbor * _simulationState.Parameters.MinimumWaterMoleculesToCarryOneMoleculeOfGlucose;
+                }
+
                 int waterToRemain = _lastCellMatrixState[x, y].WaterMolecules - waterToDiffuseOutToANeighbor * neighborsToDiffuseTo.Count;
                 int glucoseToRemain = _lastCellMatrixState[x, y].GlucoseMolecules - glucoseToGetCarriedOutToANeighbor * neighborsToDiffuseTo.Count;
 

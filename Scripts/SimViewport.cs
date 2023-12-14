@@ -2,7 +2,6 @@ using Godot;
 using Organicmatter.Scripts.Internal;
 using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.RenderingStrategy;
-using System;
 using System.Linq;
 
 public partial class SimViewport : TextureRect
