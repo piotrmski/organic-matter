@@ -12,7 +12,7 @@ font_size = 12
 
 [node name="Node2D" type="Node2D"]
 
-[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("_debugLabel1", "_debugLabel2", "_renderModeList")]
+[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("_debugLabel1", "_debugLabel2", "_renderModeList", "_simulationSpeedList")]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -28,6 +28,7 @@ script = ExtResource("1_w1efw")
 _debugLabel1 = NodePath("../Label")
 _debugLabel2 = NodePath("../Label2")
 _renderModeList = NodePath("../ModeSelection")
+_simulationSpeedList = NodePath("../SpeedSelection")
 
 [node name="Label" type="Label" parent="."]
 offset_left = 5.0
@@ -65,8 +66,31 @@ item_4/text = "Photosynthesis"
 item_5/text = "Respiration"
 
 [node name="Label3" type="Label" parent="."]
-offset_left = 834.0
-offset_top = 271.0
-offset_right = 939.0
-offset_bottom = 294.0
+offset_left = 830.0
+offset_top = 272.0
+offset_right = 935.0
+offset_bottom = 295.0
 text = "Display mode"
+
+[node name="SpeedSelection" type="ItemList" parent="."]
+offset_left = 830.0
+offset_top = 87.0
+offset_right = 967.0
+offset_bottom = 257.0
+focus_mode = 0
+allow_search = false
+auto_height = true
+item_count = 6
+item_0/text = "1x"
+item_1/text = "2x"
+item_2/text = "5x"
+item_3/text = "10x"
+item_4/text = "20x"
+item_5/text = "50x"
+
+[node name="Label4" type="Label" parent="."]
+offset_left = 830.0
+offset_top = 56.0
+offset_right = 964.0
+offset_bottom = 79.0
+text = "Simulation speed"

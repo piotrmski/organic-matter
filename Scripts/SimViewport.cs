@@ -2,6 +2,8 @@ using Godot;
 using Organicmatter.Scripts.Internal;
 using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.RenderingStrategy;
+using System;
+using System.Linq;
 
 public partial class SimViewport : TextureRect
 {
@@ -12,9 +14,6 @@ public partial class SimViewport : TextureRect
 	private int _spaceHeight = 100;
 
 	[Export]
-	private double _simulationStepLength = .05;
-
-	[Export]
 	private Label _debugLabel1;
 
 	[Export]
@@ -23,13 +22,14 @@ public partial class SimViewport : TextureRect
 	[Export]
 	private ItemList _renderModeList;
 
+	[Export]
+	private ItemList _simulationSpeedList;
+
 	private IRenderer _renderer;
 
 	private ImageTexture _viewportTexture = new();
 
 	private Simulation _simulation;
-
-	private double _timeSinceLastSimulationStep = 0;
 
 	private Vector2I? _hoveredCell;
 
@@ -46,19 +46,15 @@ public partial class SimViewport : TextureRect
 		Texture = _viewportTexture;
 
 		_renderModeList.ItemSelected += UpdateRendererByListIndex;
+
+		_simulationSpeedList.Select(0);
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		_timeSinceLastSimulationStep += delta;
-
-		if (_timeSinceLastSimulationStep < _simulationStepLength) { return; }
-
-		_timeSinceLastSimulationStep -= _simulationStepLength;
-
 		watch.Restart();
-		_simulation.Advance();
-        watch.Stop();
+		AdvanceSimulationSelectedNumberOfTimes();
+		watch.Stop();
 
 		if (_debugLabel2 != null) _debugLabel2.Text = $"{watch.ElapsedMilliseconds} ms";
 
@@ -92,6 +88,22 @@ public partial class SimViewport : TextureRect
 
 				return;
 		}
+	}
+
+	private void AdvanceSimulationSelectedNumberOfTimes()
+	{
+		int multiplier = _simulationSpeedList.GetSelectedItems().FirstOrDefault() switch
+		{
+			0 => 1,
+			1 => 2,
+			2 => 5,
+			3 => 10,
+			4 => 20,
+			5 => 50,
+			_ => 0
+		};
+
+		for (int i = 0; i < multiplier; i++) _simulation.Advance();
 	}
 
 	private void UpdateHoveredCellInfo()
