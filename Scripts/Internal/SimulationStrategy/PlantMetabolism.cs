@@ -67,9 +67,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private void Photosynthesize(ref CellData cell)
         {
-            if (cell.AccumulatedLightEnergy < _simulationState.Parameters.EnergyInGlucose ||
-                cell.WaterMolecules < 6 ||
-                _simulationState.CarbonDioxydeMolecules < 6) { return; }
+            if (!AreConditionsMetForPhotosynthesis(cell)) { return; }
 
             cell.GlucoseMolecules += 1;
             _simulationState.OxygenMolecules += 6;
@@ -78,6 +76,23 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             _simulationState.CarbonDioxydeMolecules -= 6;
 
             cell.TicksSinceLastPhotosynthesis = 0;
+        }
+
+        private bool AreConditionsMetForPhotosynthesis(CellData cell)
+        {
+            return IsPhotosynthesisPossible(cell) && IsPhotosynthesisDesired(cell);
+        }
+
+        private bool IsPhotosynthesisPossible(CellData cell)
+        {
+            return cell.AccumulatedLightEnergy >= _simulationState.Parameters.EnergyInGlucose &&
+                cell.WaterMolecules >= 6 &&
+                _simulationState.CarbonDioxydeMolecules >= 6;
+        }
+
+        private bool IsPhotosynthesisDesired(CellData cell)
+        {
+            return cell.WaterMolecules >= _simulationState.Parameters.WaterRequiredToSynthesizeGreen;
         }
 
         private void Respire(ref CellData cell)
@@ -96,14 +111,14 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool IsAtpLow(CellData cell)
         {
-            return cell.AtpEnergy < _simulationState.Parameters.EnergyRequiredToSynthesizeCellulose;
+            return cell.AtpEnergy < _simulationState.Parameters.EnergyRequiredToSynthesizeRoot;
         }
 
         private void ConsumeAtpOrDie(ref CellData cell, int x, int y)
         {
             if (cell.AtpEnergy > 0)
             {
-                --cell.AtpEnergy;
+                cell.AtpEnergy -= _simulationState.Parameters.PlantEnergyConsumptionPerTick;
             }
             else
             {

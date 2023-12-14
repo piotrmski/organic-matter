@@ -68,10 +68,22 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool AreConditionsMetForGrowth(CellData cell)
         {
-            return cell.IsPlant() &&
-                cell.AtpEnergy >= _simulationState.Parameters.EnergyRequiredToSynthesizeCellulose &&
-                cell.WaterMolecules >= _simulationState.Parameters.WaterRequiredToSynthesizeCellulose &&
-                cell.GlucoseMolecules >= _simulationState.Parameters.GlucoseInCellulose;
+            return IsGrowthPossible(cell) && IsGrowthDesired(cell);
+        }
+
+        private bool IsGrowthPossible(CellData cell)
+        {
+            return cell.IsPlant() && cell.GlucoseMolecules >= _simulationState.Parameters.GlucoseInCellulose;
+        }
+
+        private bool IsGrowthDesired(CellData cell)
+        {
+            if (cell.Type == CellType.PlantGreen)
+            {
+                return cell.WaterMolecules >= _simulationState.Parameters.WaterRequiredToSynthesizeGreen;
+            }
+
+            return cell.AtpEnergy >= _simulationState.Parameters.EnergyRequiredToSynthesizeRoot;
         }
 
         private int GetNumberOfConnections(Direction connections)

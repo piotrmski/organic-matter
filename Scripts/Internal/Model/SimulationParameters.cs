@@ -14,9 +14,9 @@
 
         public int GlucoseInCellulose = 10; // Must be even
 
-        public int WaterRequiredToSynthesizeCellulose = 10;
+        public int WaterRequiredToSynthesizeGreen = 50;
 
-        public int EnergyRequiredToSynthesizeCellulose = 500;
+        public int EnergyRequiredToSynthesizeRoot = 500;
 
         public int EnergyToDecomposeCellulose = 500;
 

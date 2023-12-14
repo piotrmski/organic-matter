@@ -12,7 +12,7 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
 
         public AtpRenderer(SimulationState simulationState) : base(simulationState) 
         { 
-            _maxValue = simulationState.Parameters.EnergyInGlucose + simulationState.Parameters.EnergyRequiredToSynthesizeCellulose;
+            _maxValue = 2 * simulationState.Parameters.EnergyInGlucose + simulationState.Parameters.EnergyRequiredToSynthesizeRoot;
         }
 
         protected override Color GetCellColor(CellData cell)

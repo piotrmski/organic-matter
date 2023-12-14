@@ -50,7 +50,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     return;
                 }
 
-                int numberOfCellsToDiffuseBetween = cell.IsPlant() ? 4 : 5;
+                int numberOfCellsToDiffuseBetween = cell.IsPlant() ? 4 : 16;
 
                 int waterToDiffuseOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules / numberOfCellsToDiffuseBetween;
                 int glucoseToGetCarriedOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules == 0 ?
