@@ -1,6 +1,5 @@
 using Godot;
 using Organicmatter.Scripts.Internal;
-using Organicmatter.Scripts.Internal.Helpers;
 using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.RenderingStrategy;
 
@@ -59,7 +58,7 @@ public partial class SimViewport : TextureRect
 
 		watch.Restart();
 		_simulation.Advance();
-		watch.Stop();
+        watch.Stop();
 
 		if (_debugLabel2 != null) _debugLabel2.Text = $"{watch.ElapsedMilliseconds} ms";
 

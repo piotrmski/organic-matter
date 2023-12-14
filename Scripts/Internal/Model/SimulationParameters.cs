@@ -2,7 +2,7 @@
 {
     internal struct SimulationParameters
     {
-        public int WaterMoleculesStartingDistribution = 1000;
+        public int WaterMoleculesStartingDistribution = 100;
 
         public int CarbonDioxydeStartingAmount = 100000;
 
@@ -14,7 +14,9 @@
 
         public int GlucoseInCellulose = 10; // Must be even
 
-        public int EnergyToSynthesizeCellulose = 500;
+        public int WaterRequiredToSynthesizeCellulose = 10;
+
+        public int EnergyRequiredToSynthesizeCellulose = 500;
 
         public int EnergyToDecomposeCellulose = 500;
 

@@ -8,12 +8,16 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
     {
         private Color _baseColor = new(0xffee33ff);
 
-        public AtpRenderer(SimulationState simulationState) : base(simulationState) { }
+        private int _maxValue;
+
+        public AtpRenderer(SimulationState simulationState) : base(simulationState) 
+        { 
+            _maxValue = simulationState.Parameters.EnergyInGlucose + simulationState.Parameters.EnergyRequiredToSynthesizeCellulose;
+        }
 
         protected override Color GetCellColor(CellData cell)
         {
-            return _baseColor.Darkened((_simulationState.Parameters.EnergyToSynthesizeCellulose - cell.AtpEnergy) /
-                (float)_simulationState.Parameters.EnergyToSynthesizeCellulose);
+            return _baseColor.Darkened((_maxValue - cell.AtpEnergy) / (float)_maxValue);
         }
     }
 }

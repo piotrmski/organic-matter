@@ -96,7 +96,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool IsAtpLow(CellData cell)
         {
-            return cell.AtpEnergy < _simulationState.Parameters.EnergyToSynthesizeCellulose;
+            return cell.AtpEnergy < _simulationState.Parameters.EnergyRequiredToSynthesizeCellulose;
         }
 
         private void ConsumeAtpOrDie(ref CellData cell, int x, int y)
