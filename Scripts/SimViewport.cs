@@ -109,42 +109,26 @@ public partial class SimViewport : TextureRect
 	{
 		if (_debugLabel1 == null) { return; }
 
-		int waterSum = 0;
-		int glucoseSum = 0;
-		int celluloseSum = 0;
+		int mineralSum = 0;
+		int energySum = 0;
+        int celluloseSum = 0;
+        int wasteSum = 0;
 
 		_simulation.SimulationState.ForEachCell((ref CellData cell) =>
 		{
-			waterSum += cell.WaterMolecules;
-			glucoseSum += cell.GlucoseMolecules;
-			celluloseSum += cell.IsPlant() || cell.Type == CellType.Soil ? 1 : 0;
+            mineralSum += cell.MineralContent;
+            energySum += cell.EnergyContent;
+            wasteSum += cell.WasteContent;
+			celluloseSum += cell.IsPlant() || cell.Type == CellType.Soil ? _simulation.SimulationState.Parameters.EnergyToSynthesizePlantCell : 0;
 		});
 
-		int carbonAtoms = _simulation.SimulationState.CarbonDioxydeMolecules +
-			glucoseSum * 6 +
-			celluloseSum * 6 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
+		_debugLabel1.Text = $"Minerals in pure form = {mineralSum}\n" +
+			$"Minerals as energy = {energySum}\n" +
+			$"Minerals as waste = {wasteSum}\n" +
+			$"Minerals as plant structure = {celluloseSum}\n\n" +
+			$"Total minerals = {mineralSum + energySum + celluloseSum + wasteSum}\n\n";
 
-		int oxygenAtoms = _simulation.SimulationState.OxygenMolecules * 2 +
-			_simulation.SimulationState.CarbonDioxydeMolecules * 2 +
-			waterSum +
-			glucoseSum * 6 +
-			celluloseSum * 5 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
-
-		int hydrogenAtoms = waterSum * 2 +
-			glucoseSum * 12 +
-			celluloseSum * 12 * _simulation.SimulationState.Parameters.GlucoseInCellulose;
-
-		_debugLabel1.Text = $"Total water molecules = {waterSum}\n" +
-			$"Total glucose molecules = {glucoseSum}\n" +
-			$"Total cellulose cells = {celluloseSum}\n\n" +
-			$"Total carbon atoms = {carbonAtoms}\n" +
-			$"Total oxygen atoms = {oxygenAtoms}\n" +
-			$"Total hydrogen atoms = {hydrogenAtoms}\n\n" +
-			$"CO2 molecules in the atmosphere = {_simulation.SimulationState.CarbonDioxydeMolecules}\n" +
-			$"O2 molecules in the atmosphere = {_simulation.SimulationState.OxygenMolecules}\n\n";
-
-
-		if (_hoveredCell != null)
+        if (_hoveredCell != null)
 		{
 			_debugLabel1.Text += $"X = {_hoveredCell.Value.X} Y = {_hoveredCell.Value.Y}\n" +
 				$"{_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y]}";
@@ -156,11 +140,11 @@ public partial class SimViewport : TextureRect
 		return listIndex switch
 		{
 			0 => new DefaultRenderer(_simulation.SimulationState),
-			1 => new WaterRenderer(_simulation.SimulationState),
-			2 => new GlucoseRenderer(_simulation.SimulationState),
-			3 => new AtpRenderer(_simulation.SimulationState),
-			4 => new PhotosynthesisRenderer(_simulation.SimulationState),
-			_ => new RespirationRenderer(_simulation.SimulationState),
+			1 => new MineralsRenderer(_simulation.SimulationState),
+			2 => new EnergyRenderer(_simulation.SimulationState),
+            3 => new WasteRenderer(_simulation.SimulationState),
+            4 => new PhotosynthesisRenderer(_simulation.SimulationState),
+			_ => new AgeRenderer(_simulation.SimulationState),
 		};
 	}
 

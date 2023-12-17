@@ -8,15 +8,15 @@
 
         public int AccumulatedLightEnergy;
 
-        public int WaterMolecules;
+        public int MineralContent;
 
-        public int GlucoseMolecules;
+        public int EnergyContent;
 
-        public int AtpEnergy;
+        public int WasteContent;
+
+        public int TicksSinceSynthesis;
 
         public int TicksSinceLastPhotosynthesis;
-
-        public int TicksSinceLastRespiration;
 
         public bool IsSolid()
         {
@@ -25,19 +25,12 @@
 
         public bool CanFall()
         {
-            return Type == CellType.Soil || Type == CellType.Bacteria;
+            return Type == CellType.Soil || Type == CellType.Water;
         }
 
         public bool CanDiffuse()
         {
-            return Type == CellType.Soil || IsPlant();
-        }
-
-        public bool CanDiffuseTo(CellData otherCell, bool areCellsConnected)
-        {
-            return Type == CellType.Soil && otherCell.Type == CellType.Soil ||
-                IsPlant() && otherCell.IsPlant() && areCellsConnected ||
-                Type == CellType.Soil && otherCell.Type == CellType.PlantRoot && WaterMolecules > otherCell.WaterMolecules;
+            return Type != CellType.Air;
         }
 
         public bool IsPlant()
@@ -61,13 +54,14 @@
 
             if (CanDiffuse())
             {
-                result += $"Water molecules = {WaterMolecules}\n";
-                result += $"Glucose molecules = {GlucoseMolecules}\n";
+                result += $"Mineral content = {MineralContent}\n";
             }
 
             if (IsPlant())
             {
-                result += $"Energy in ATP = {AtpEnergy}\n";
+                result += $"Energy content = {EnergyContent}\n";
+                result += $"Waste content = {WasteContent}\n";
+                result += $"Age = {TicksSinceSynthesis}\n";
             }
 
             if (Type == CellType.PlantGreen)

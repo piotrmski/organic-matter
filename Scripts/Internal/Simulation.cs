@@ -40,7 +40,7 @@ namespace Organicmatter.Scripts.Internal
                 if (y < 30)
                 {
                     cellData.Type = CellType.Soil;
-                    cellData.WaterMolecules = SimulationState.Parameters.WaterMoleculesStartingDistribution;
+                    cellData.MineralContent = SimulationState.Parameters.MineralsCriticalSoilDistribution;
                 }
                 else
                 {
@@ -51,9 +51,7 @@ namespace Organicmatter.Scripts.Internal
             int x = SimulationState.CellMatrix.GetLength(0) / 2;
 
             SimulationState.CellMatrix[x, 29].Type = CellType.PlantRoot;
-            SimulationState.CellMatrix[x, 29].AtpEnergy = 500;
             SimulationState.CellMatrix[x, 30].Type = CellType.PlantGreen;
-            SimulationState.CellMatrix[x, 30].AtpEnergy = 500;
 
             SimulationState.AddCellConnections(x, 29, Direction.Top);
         }

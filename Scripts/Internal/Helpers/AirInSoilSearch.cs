@@ -33,7 +33,7 @@ namespace Organicmatter.Scripts.Internal.Helpers
             InitializeSearchAlgorithm();
         }
 
-        public Vector2I? FindNearestAir(int fromX, int fromY) 
+        public Vector2I[] FindPathToNearestAir(int fromX, int fromY) 
         {
             if (_simulationState.CellMatrix[fromX, fromY].Type != CellType.Soil) { return null; }
 
@@ -47,7 +47,10 @@ namespace Organicmatter.Scripts.Internal.Helpers
 
             if(!(pathFound?.Length > 2)) { return null; }
 
-            return IndexToCoordinates((int)pathFound[pathFound.Length - 2]);
+            return pathFound
+                .Take(pathFound.Length - 1)
+                .Select(x => IndexToCoordinates((int)x))
+                .ToArray();
         }
 
         private void DetermineSearchTargets()

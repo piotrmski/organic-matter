@@ -12,6 +12,10 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private int _spaceHeight;
 
+        private int _xMax;
+
+        private int _yMax;
+
         private SimulationState _simulationState;
 
         private CellData[,] _lastCellMatrixState;
@@ -24,6 +28,10 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             _spaceHeight = simulationState.CellMatrix.GetLength(1);
 
+            _xMax = _spaceWidth - 1;
+
+            _yMax = _spaceHeight - 1;
+
             _lastCellMatrixState = new CellData[_spaceWidth, _spaceHeight];
         }
 
@@ -33,76 +41,159 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             _simulationState.ForEachCell((ref CellData cell) =>
             {
-                cell.WaterMolecules = 0;
-                cell.GlucoseMolecules = 0;
+                cell.MineralContent = 0;
+                cell.EnergyContent = 0;
+                cell.WasteContent = 0;
             });
 
             _simulationState.ForEachCell((ref CellData cell, int x, int y) =>
             {
                 if (!cell.CanDiffuse()) { return; }
 
-                List<Vector2I> neighborsToDiffuseTo = GetNeighborsToDiffuseTo(x, y);
+                CellData lastCellState = _lastCellMatrixState[x, y];
 
-                if (!neighborsToDiffuseTo.Any())
+                cell.MineralContent += lastCellState.MineralContent;
+                cell.EnergyContent += lastCellState.EnergyContent;
+                cell.WasteContent += lastCellState.WasteContent;
+
+                List<DiffusionSubstanceData> neighborsToDiffuseTo = GetNeighborsToDiffuseTo(x, y);
+
+                foreach (var diffusionData in neighborsToDiffuseTo)
                 {
-                    cell.WaterMolecules += _lastCellMatrixState[x, y].WaterMolecules;
-                    cell.GlucoseMolecules += _lastCellMatrixState[x, y].GlucoseMolecules;
-                    return;
+                    ref CellData destination = ref _simulationState.CellMatrix[diffusionData.Destination.X, diffusionData.Destination.Y];
+
+                    destination.MineralContent += diffusionData.Minerals;
+                    destination.EnergyContent += diffusionData.Energy;
+                    destination.WasteContent += diffusionData.Waste;
+
+                    cell.MineralContent -= diffusionData.Minerals;
+                    cell.EnergyContent -= diffusionData.Energy;
+                    cell.WasteContent -= diffusionData.Waste;
                 }
 
-                int numberOfCellsToDiffuseBetween = cell.IsPlant() ? 4 : 16;
-
-                int waterToDiffuseOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules / numberOfCellsToDiffuseBetween;
-                int glucoseToGetCarriedOutToANeighbor = _lastCellMatrixState[x, y].WaterMolecules == 0 ?
-                    0 : (_lastCellMatrixState[x, y].GlucoseMolecules * waterToDiffuseOutToANeighbor) / _lastCellMatrixState[x, y].WaterMolecules;
-
-                if (glucoseToGetCarriedOutToANeighbor > waterToDiffuseOutToANeighbor * _simulationState.Parameters.MinimumWaterMoleculesToCarryOneMoleculeOfGlucose)
+                if (cell.Type == CellType.Water && cell.MineralContent == 0)
                 {
-                    glucoseToGetCarriedOutToANeighbor = waterToDiffuseOutToANeighbor * _simulationState.Parameters.MinimumWaterMoleculesToCarryOneMoleculeOfGlucose;
+                    cell.Type = CellType.Air;
                 }
-
-                int waterToRemain = _lastCellMatrixState[x, y].WaterMolecules - waterToDiffuseOutToANeighbor * neighborsToDiffuseTo.Count;
-                int glucoseToRemain = _lastCellMatrixState[x, y].GlucoseMolecules - glucoseToGetCarriedOutToANeighbor * neighborsToDiffuseTo.Count;
-
-                neighborsToDiffuseTo.ForEach(x =>
-                {
-                    _simulationState.CellMatrix[x.X, x.Y].WaterMolecules += waterToDiffuseOutToANeighbor;
-                    _simulationState.CellMatrix[x.X, x.Y].GlucoseMolecules += glucoseToGetCarriedOutToANeighbor;
-                });
-
-                cell.WaterMolecules += waterToRemain;
-                cell.GlucoseMolecules += glucoseToRemain;
             });
         }
 
-        private List<Vector2I> GetNeighborsToDiffuseTo(int x, int y)
+        private List<DiffusionSubstanceData> GetNeighborsToDiffuseTo(int x, int y)
         {
-            List<Vector2I> result = new();
+            List<DiffusionSubstanceData> result = new();
 
             CellData lastCellState = _lastCellMatrixState[x, y];
-            Direction connections = _simulationState.GetCellConnections(x, y);
+            Direction connections = lastCellState.IsPlant() ? _simulationState.GetCellConnections(x, y) : Direction.None;
 
-            if (x > 0 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x - 1, y], connections.HasFlag(Direction.Left)))
+            if (x > 0)
             {
-                result.Add(new(x - 1, y));
+                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x - 1, y), connections.HasFlag(Direction.Left)));
             }
 
-            if (x < _simulationState.CellMatrix.GetLength(0) - 1 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x + 1, y], connections.HasFlag(Direction.Right)))
+            if (x < _xMax)
             {
-                result.Add(new(x + 1, y));
+                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x + 1, y), connections.HasFlag(Direction.Right)));
             }
 
-            if (y > 0 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x, y - 1], connections.HasFlag(Direction.Bottom)))
+            if (y > 0)
             {
-                result.Add(new(x, y - 1));
+                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x, y - 1), connections.HasFlag(Direction.Bottom)));
             }
 
-            if (y < _simulationState.CellMatrix.GetLength(1) - 1 && lastCellState.CanDiffuseTo(_lastCellMatrixState[x, y + 1], connections.HasFlag(Direction.Top)))
+            if (y < _yMax)
             {
-                result.Add(new(x, y + 1));
+                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x, y + 1), connections.HasFlag(Direction.Top)));
+            }
+
+            if (lastCellState.Type == CellType.Water)
+            {
+                FillMineralsDiffusionDataFromWaterCell(result, lastCellState);
             }
 
             return result;
+        }
+
+        private DiffusionSubstanceData? GetSubstaceToDiffuse(CellData source, Vector2I destinationLocation, bool areCellsConnected)
+        {
+            CellData destination = _lastCellMatrixState[destinationLocation.X, destinationLocation.Y];
+
+            if (source.Type == CellType.Soil && destination.Type == CellType.Soil)
+            {
+                if (source.MineralContent <= _simulationState.Parameters.MineralsCriticalSoilDistribution) { return null; }
+
+                return new()
+                {
+                    Destination = destinationLocation,
+                    Minerals = (source.MineralContent - _simulationState.Parameters.MineralsCriticalSoilDistribution) / 5
+                };
+            }
+            else if (source.Type == CellType.Soil && destination.IsPlant())
+            {
+                return new()
+                {
+                    Destination = destinationLocation,
+                    Minerals = source.MineralContent / 5
+                };
+            }
+            else if (source.Type == CellType.Water && source.Type == CellType.Soil)
+            {
+                return new()
+                {
+                    Destination = destinationLocation
+                };
+            }
+            else if (source.IsPlant() && destination.IsPlant() && areCellsConnected)
+            {
+                return new()
+                {
+                    Destination = destinationLocation,
+                    Minerals = source.MineralContent / 4,
+                    Energy = source.EnergyContent / 4,
+                    Waste = source.WasteContent / 4
+                };
+            }
+
+            return null;
+        }
+
+        private void FillMineralsDiffusionDataFromWaterCell(List<DiffusionSubstanceData> result, CellData source)
+        {
+            int remainingMinerals = source.MineralContent;
+            int i = 0;
+
+            result.ForEach(x =>
+            {
+                if (i == result.Count - 1)
+                {
+                    x.Minerals = remainingMinerals;
+                }
+                else
+                {
+                    x.Minerals = source.MineralContent / result.Count;
+                    remainingMinerals -= x.Minerals;
+                }
+
+                i++;
+            });
+        }
+
+        private void AddToListIfNotNull(List<DiffusionSubstanceData> result, DiffusionSubstanceData? value)
+        {
+            if (value != null)
+            {
+                result.Add(value.Value);
+            }
+        }
+
+        private struct DiffusionSubstanceData
+        {
+            public Vector2I Destination;
+
+            public int Minerals;
+
+            public int Energy;
+
+            public int Waste;
         }
     }
 }

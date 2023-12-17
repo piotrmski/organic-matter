@@ -4,8 +4,8 @@
     {
         Air,
         Soil,
+        Water,
         PlantRoot,
-        PlantGreen,
-        Bacteria
+        PlantGreen
     }
 }

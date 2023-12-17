@@ -1,6 +1,7 @@
 ﻿using Godot;
 using Organicmatter.Scripts.Internal.Helpers;
 using Organicmatter.Scripts.Internal.Model;
+using System.Net.NetworkInformation;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy
 {
@@ -73,17 +74,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool IsGrowthPossible(CellData cell)
         {
-            return cell.IsPlant() && cell.GlucoseMolecules >= _simulationState.Parameters.GlucoseInCellulose;
+            return cell.IsPlant() && cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizePlantCell;
         }
 
         private bool IsGrowthDesired(CellData cell)
         {
-            if (cell.Type == CellType.PlantGreen)
-            {
-                return cell.WaterMolecules >= _simulationState.Parameters.WaterRequiredToSynthesizeGreen;
-            }
-
-            return cell.AtpEnergy >= _simulationState.Parameters.EnergyRequiredToSynthesizeRoot;
+            return true;
         }
 
         private int GetNumberOfConnections(Direction connections)
@@ -204,27 +200,26 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             if (_simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type == CellType.Soil)
             {
-                Vector2I? displacementDestination = _airInSoilSearch.FindNearestAir(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
+                Vector2I[] displacementPath = _airInSoilSearch.FindPathToNearestAir(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
 
-                if (displacementDestination == null) { return; }
+                if (displacementPath == null) { return; }
 
-                (
-                    _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y],
-                    _simulationState.CellMatrix[displacementDestination.Value.X, displacementDestination.Value.Y]
-                ) = (
-                    _simulationState.CellMatrix[displacementDestination.Value.X, displacementDestination.Value.Y],
-                    _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y]
-                );
+                for (int i = displacementPath.Length - 1; i > 0; --i)
+                {
+                    SwapCellsByCoordinates(displacementPath[i], displacementPath[i - 1]);
+                }
             }
 
             _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type = type;
-            _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].WaterMolecules = _simulationState.CellMatrix[sourceX, sourceY].WaterMolecules / 2;
-            _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].AtpEnergy = _simulationState.CellMatrix[sourceX, sourceY].AtpEnergy / 2;
-            _simulationState.CellMatrix[sourceX, sourceY].WaterMolecules -= _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].WaterMolecules;
-            _simulationState.CellMatrix[sourceX, sourceY].AtpEnergy -= _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].AtpEnergy;
-            _simulationState.CellMatrix[sourceX, sourceY].GlucoseMolecules -= _simulationState.Parameters.GlucoseInCellulose;
-            _simulationState.OxygenMolecules += _simulationState.Parameters.GlucoseInCellulose / 2;
+            _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].TicksSinceSynthesis = 0;
+            _simulationState.CellMatrix[sourceX, sourceY].EnergyContent -= _simulationState.Parameters.EnergyToSynthesizePlantCell;
             _simulationState.AddCellConnections(sourceX, sourceY, directionOfGrowth);
+        }
+
+        private void SwapCellsByCoordinates(Vector2I a, Vector2I b)
+        {
+            (_simulationState.CellMatrix[a.X, a.Y], _simulationState.CellMatrix[b.X, b.Y]) =
+                (_simulationState.CellMatrix[b.X, b.Y], _simulationState.CellMatrix[a.X, a.Y]);
         }
     }
 }

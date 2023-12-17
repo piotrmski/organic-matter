@@ -43,9 +43,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     Photosynthesize(ref cell);
                 }
 
-                if (IsAtpLow(cell)) { Respire(ref cell); }
-
-                ConsumeAtpOrDie(ref cell, x, y);
+                ConsumeEnergyOrDie(ref cell, x, y);
             });
         }
 
@@ -62,18 +60,16 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             if (y == _yMax) { cell.AccumulatedLightEnergy += _simulationState.Parameters.DirectLightEnergy; }
             else if (_simulationState.CellMatrix[x, y + 1].Type == CellType.Air) { cell.AccumulatedLightEnergy += _simulationState.CellMatrix[x, y + 1].LightEnergy; }
 
-            if (cell.AccumulatedLightEnergy > _simulationState.Parameters.EnergyInGlucose) { cell.AccumulatedLightEnergy = _simulationState.Parameters.EnergyInGlucose; }
+            if (cell.AccumulatedLightEnergy > _simulationState.Parameters.LightToConvertMineralToEnergy) { cell.AccumulatedLightEnergy = _simulationState.Parameters.LightToConvertMineralToEnergy; }
         }
 
         private void Photosynthesize(ref CellData cell)
         {
             if (!AreConditionsMetForPhotosynthesis(cell)) { return; }
 
-            cell.GlucoseMolecules += 1;
-            _simulationState.OxygenMolecules += 6;
-            cell.AccumulatedLightEnergy -= _simulationState.Parameters.EnergyInGlucose;
-            cell.WaterMolecules -= 6;
-            _simulationState.CarbonDioxydeMolecules -= 6;
+            cell.EnergyContent += 1;
+            cell.AccumulatedLightEnergy -= _simulationState.Parameters.LightToConvertMineralToEnergy;
+            cell.MineralContent -= 1;
 
             cell.TicksSinceLastPhotosynthesis = 0;
         }
@@ -85,52 +81,32 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool IsPhotosynthesisPossible(CellData cell)
         {
-            return cell.AccumulatedLightEnergy >= _simulationState.Parameters.EnergyInGlucose &&
-                cell.WaterMolecules >= 6 &&
-                _simulationState.CarbonDioxydeMolecules >= 6;
+            return cell.AccumulatedLightEnergy >= _simulationState.Parameters.LightToConvertMineralToEnergy &&
+                cell.MineralContent >= 1;
         }
 
         private bool IsPhotosynthesisDesired(CellData cell)
         {
-            return cell.WaterMolecules >= _simulationState.Parameters.WaterRequiredToSynthesizeGreen;
+            return true;
         }
 
-        private void Respire(ref CellData cell)
+        private void ConsumeEnergyOrDie(ref CellData cell, int x, int y)
         {
-            if (cell.GlucoseMolecules < 1 ||
-                _simulationState.OxygenMolecules < 6) { return; }
-
-            cell.GlucoseMolecules -= 1;
-            _simulationState.OxygenMolecules -= 6;
-            cell.AtpEnergy += _simulationState.Parameters.EnergyInGlucose;
-            cell.WaterMolecules += 6;
-            _simulationState.CarbonDioxydeMolecules += 6;
-
-            cell.TicksSinceLastRespiration = 0;
-        }
-
-        private bool IsAtpLow(CellData cell)
-        {
-            return cell.AtpEnergy < _simulationState.Parameters.EnergyRequiredToSynthesizeRoot;
-        }
-
-        private void ConsumeAtpOrDie(ref CellData cell, int x, int y)
-        {
-            if (cell.AtpEnergy > 0)
-            {
-                cell.AtpEnergy -= _simulationState.Parameters.PlantEnergyConsumptionPerTick;
-            }
-            else
-            {
-                cell.Type = CellType.Soil;
-                _simulationState.RemoveCellConnections(x, y);
-            }
+            //if (cell.AtpEnergy > 0)
+            //{
+            //    cell.AtpEnergy -= _simulationState.Parameters.PlantEnergyConsumptionPerTick;
+            //}
+            //else
+            //{
+            //    cell.Type = CellType.Soil;
+            //    _simulationState.RemoveCellConnections(x, y);
+            //}
         }
 
         private static void IncrementCounters(ref CellData cell)
         {
             if (cell.TicksSinceLastPhotosynthesis < int.MaxValue) cell.TicksSinceLastPhotosynthesis += 1;
-            if (cell.TicksSinceLastRespiration < int.MaxValue) cell.TicksSinceLastRespiration += 1;
+            if (cell.TicksSinceSynthesis < int.MaxValue) cell.TicksSinceSynthesis += 1;
         }
     }
 }

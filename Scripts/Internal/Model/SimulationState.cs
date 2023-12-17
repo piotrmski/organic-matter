@@ -8,10 +8,6 @@
 
         public bool[,] CellHorizontalConnections;
 
-        public int CarbonDioxydeMolecules;
-
-        public int OxygenMolecules;
-
         public SimulationParameters Parameters = new();
 
         private int _spaceWidth;
@@ -26,9 +22,6 @@
             CellMatrix = new CellData[spaceWidth, spaceHeight];
             CellVerticalConnections = new bool[spaceWidth, spaceHeight - 1];
             CellHorizontalConnections = new bool[spaceWidth - 1, spaceHeight];
-
-            CarbonDioxydeMolecules = Parameters.CarbonDioxydeStartingAmount;
-            OxygenMolecules = Parameters.OxygenStartingAmount;
         }
 
         public void AddCellConnections(int x, int y, Direction connection)

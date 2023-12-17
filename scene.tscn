@@ -51,32 +51,32 @@ justification_flags = 160
 
 [node name="ModeSelection" type="ItemList" parent="."]
 offset_left = 830.0
-offset_top = 303.0
+offset_top = 308.0
 offset_right = 967.0
-offset_bottom = 473.0
+offset_bottom = 478.0
 focus_mode = 0
 allow_search = false
 auto_height = true
 item_count = 6
 item_0/text = "Default"
-item_1/text = "Water"
-item_2/text = "Glucose"
-item_3/text = "ATP"
+item_1/text = "Minerals"
+item_2/text = "Energy"
+item_3/text = "Waste"
 item_4/text = "Photosynthesis"
-item_5/text = "Respiration"
+item_5/text = "Age"
 
 [node name="Label3" type="Label" parent="."]
 offset_left = 830.0
-offset_top = 272.0
+offset_top = 277.0
 offset_right = 935.0
-offset_bottom = 295.0
+offset_bottom = 300.0
 text = "Display mode"
 
 [node name="SpeedSelection" type="ItemList" parent="."]
 offset_left = 830.0
-offset_top = 87.0
+offset_top = 92.0
 offset_right = 967.0
-offset_bottom = 257.0
+offset_bottom = 262.0
 focus_mode = 0
 allow_search = false
 auto_height = true
@@ -90,7 +90,7 @@ item_5/text = "50x"
 
 [node name="Label4" type="Label" parent="."]
 offset_left = 830.0
-offset_top = 56.0
+offset_top = 61.0
 offset_right = 964.0
-offset_bottom = 79.0
+offset_bottom = 84.0
 text = "Simulation speed"

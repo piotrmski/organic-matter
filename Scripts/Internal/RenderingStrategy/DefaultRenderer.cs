@@ -93,6 +93,9 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
                 case CellType.PlantGreen:
                     baseColor = new(0x44aa55ff);
                     break;
+                case CellType.Water:
+                    baseColor = new(0x00aaffff);
+                    break;
                 default:
                     baseColor = new(0x605555ff);
                     break;
@@ -100,7 +103,7 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
 
             if (cell.CanDiffuse())
             {
-                return baseColor.Darkened(cell.WaterMolecules / (4f * _simulationState.Parameters.WaterMoleculesStartingDistribution));
+                return baseColor.Darkened(cell.MineralContent / (4f * _simulationState.Parameters.MineralsCriticalSoilDistribution));
             }
 
             return baseColor;
