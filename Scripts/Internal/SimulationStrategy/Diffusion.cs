@@ -161,6 +161,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             List<DiffusionSubstanceData> result = new();
 
             int remainingMinerals = source.MineralContent;
+            int remainingEnergy = source.EnergyContent;
+            int remainingWaste = source.WasteContent;
             int i = 0;
 
             neighbors.ForEach(x =>
@@ -168,11 +170,17 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                 if (i == neighbors.Count - 1)
                 {
                     x.Minerals = remainingMinerals;
+                    x.Energy = remainingEnergy;
+                    x.Waste = remainingWaste;
                 }
                 else
                 {
                     x.Minerals = source.MineralContent / neighbors.Count;
+                    x.Energy = source.EnergyContent / neighbors.Count;
+                    x.Waste = source.WasteContent / neighbors.Count;
                     remainingMinerals -= x.Minerals;
+                    remainingEnergy -= x.Energy;
+                    remainingWaste -= x.Waste;
                 }
 
                 result.Add(x);

@@ -34,6 +34,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             {
                 IncrementCounters(ref cell);
 
+                if (cell.Type == CellType.Soil)
+                {
+                    ConvertEnergyAndWasteToMinerals(ref cell);
+                    return;
+                }
+
                 if (!cell.IsPlant()) { return; }
 
                 if (cell.Type == CellType.PlantGreen)
@@ -45,6 +51,23 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
                 ConsumeEnergyOrDie(ref cell, x, y);
             });
+        }
+
+        private void ConvertEnergyAndWasteToMinerals(ref CellData cell)
+        {
+            if (cell.EnergyContent > 0)
+            {
+                cell.MineralContent += 1;
+                cell.EnergyContent -= 1;
+                return;
+            }
+
+            if (cell.WasteContent > 0)
+            {
+                cell.MineralContent += 1;
+                cell.WasteContent -= 1;
+                return;
+            }
         }
 
         private void TakeInLightEnergy(ref CellData cell, int x, int y)
@@ -97,9 +120,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             if (cell.EnergyContent < energyToConsume || cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell)
             {
                 cell.Type = CellType.Water;
-                cell.MineralContent = _simulationState.Parameters.EnergyToSynthesizePlantCell + cell.MineralContent + cell.EnergyContent + cell.WasteContent;
-                cell.EnergyContent = 0;
-                cell.WasteContent = 0;
+                cell.MineralContent += _simulationState.Parameters.EnergyToSynthesizePlantCell;
 
                 _simulationState.RemoveCellConnections(x, y);
             }
