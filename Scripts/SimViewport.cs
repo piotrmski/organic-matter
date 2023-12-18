@@ -2,7 +2,10 @@ using Godot;
 using Organicmatter.Scripts.Internal;
 using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.RenderingStrategy;
+using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
+using System;
 
 public partial class SimViewport : TextureRect
 {
@@ -32,7 +35,7 @@ public partial class SimViewport : TextureRect
 
 	private Vector2I? _hoveredCell;
 
-	private System.Diagnostics.Stopwatch watch = new();
+	private Stopwatch _watch = new();
 
 	public override void _Ready()
 	{
@@ -51,11 +54,7 @@ public partial class SimViewport : TextureRect
 
 	public override void _PhysicsProcess(double delta)
 	{
-		watch.Restart();
 		AdvanceSimulationSelectedNumberOfTimes();
-		watch.Stop();
-
-		if (_debugLabel2 != null) _debugLabel2.Text = $"{watch.ElapsedMilliseconds} ms";
 
 		_renderer.UpdateImage();
 
@@ -91,7 +90,40 @@ public partial class SimViewport : TextureRect
 
 	private void AdvanceSimulationSelectedNumberOfTimes()
 	{
-		int multiplier = _simulationSpeedList.GetSelectedItems().FirstOrDefault() switch
+		int multiplier = GetTickMultiplier();
+		List<TimeSpan[]> executionTimes = new();
+
+		_watch.Restart();
+		for (int i = 0; i < multiplier; i++)
+		{
+			executionTimes.Add(_simulation.Advance());
+		}
+		_watch.Stop();
+
+        TimeSpan[] totalExecutionTimes = executionTimes.Aggregate(new TimeSpan[executionTimes[0].Length], (acc, x) =>
+		{
+			for (int j = 0; j < x.Length; j++)
+			{
+				acc[j] += x[j];
+			}
+
+			return acc;
+		});
+
+		if (_debugLabel2 != null)
+		{
+			_debugLabel2.Text = $"Gravity: {totalExecutionTimes[0].Milliseconds} ms\n" +
+				$"Diffusion: {totalExecutionTimes[1].Milliseconds} ms\n" +
+				$"PlantGrowth: {totalExecutionTimes[2].Milliseconds} ms\n" +
+				$"Lighting: {totalExecutionTimes[3].Milliseconds} ms\n" +
+				$"PlantMetabolism: {totalExecutionTimes[4].Milliseconds} ms\n\n" +
+				$"Total: {_watch.ElapsedMilliseconds} ms";
+		}
+	}
+
+	private int GetTickMultiplier()
+	{
+		return _simulationSpeedList.GetSelectedItems().FirstOrDefault() switch
 		{
 			0 => 1,
 			1 => 2,
@@ -101,8 +133,6 @@ public partial class SimViewport : TextureRect
 			5 => 50,
 			_ => 0
 		};
-
-		for (int i = 0; i < multiplier; i++) _simulation.Advance();
 	}
 
 	private void UpdateHoveredCellInfo()
@@ -122,7 +152,8 @@ public partial class SimViewport : TextureRect
 			celluloseSum += cell.IsPlant() ? _simulation.SimulationState.Parameters.EnergyToSynthesizePlantCell : 0;
 		});
 
-		_debugLabel1.Text = $"Minerals in pure form = {mineralSum}\n" +
+		_debugLabel1.Text = $"Iteration = {_simulation.Iteration}\n\n" + 
+			$"Minerals in pure form = {mineralSum}\n" +
 			$"Minerals as energy = {energySum}\n" +
 			$"Minerals as waste = {wasteSum}\n" +
 			$"Minerals as plant structure = {celluloseSum}\n\n" +

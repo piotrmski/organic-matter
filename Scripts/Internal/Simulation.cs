@@ -1,8 +1,9 @@
 ﻿using Godot;
 using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.SimulationStrategy;
-using System;
+using System.Diagnostics;
 using System.Collections.Generic;
+using System;
 
 namespace Organicmatter.Scripts.Internal
 {
@@ -10,7 +11,11 @@ namespace Organicmatter.Scripts.Internal
     {
         public SimulationState SimulationState { get; private set; }
 
+        public int Iteration { get; private set; } = 0;
+
         private List<ISimulationStrategy> _strategies;
+
+        private Stopwatch _watch = new();
 
         public Simulation(int spaceWidth, int spaceHeight) 
         {
@@ -28,9 +33,23 @@ namespace Organicmatter.Scripts.Internal
             };
         }
 
-        public void Advance()
+        public TimeSpan[] Advance()
         {
-            _strategies.ForEach(strategy => strategy.Advance());
+            TimeSpan[] executionTimes = new TimeSpan[_strategies.Count];
+            int i = 0;
+
+            _strategies.ForEach(strategy =>
+            {
+                _watch.Restart();
+                strategy.Advance();
+                _watch.Stop();
+
+                executionTimes[i++] = _watch.Elapsed;
+            });
+
+            ++Iteration;
+
+            return executionTimes;
         }
 
         private void PrepareInitialState()

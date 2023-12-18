@@ -55,12 +55,12 @@
             if (CanDiffuse())
             {
                 result += $"Mineral content = {MineralContent}\n";
+                result += $"Energy content = {EnergyContent}\n";
+                result += $"Waste content = {WasteContent}\n";
             }
 
             if (IsPlant())
             {
-                result += $"Energy content = {EnergyContent}\n";
-                result += $"Waste content = {WasteContent}\n";
                 result += $"Age = {TicksSinceSynthesis}\n";
             }
 
