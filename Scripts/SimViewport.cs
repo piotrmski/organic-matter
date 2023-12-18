@@ -119,7 +119,7 @@ public partial class SimViewport : TextureRect
 			mineralSum += cell.MineralContent;
 			energySum += cell.EnergyContent;
 			wasteSum += cell.WasteContent;
-			celluloseSum += cell.IsPlant() || cell.Type == CellType.Soil ? _simulation.SimulationState.Parameters.EnergyToSynthesizePlantCell : 0;
+			celluloseSum += cell.IsPlant() ? _simulation.SimulationState.Parameters.EnergyToSynthesizePlantCell : 0;
 		});
 
 		_debugLabel1.Text = $"Minerals in pure form = {mineralSum}\n" +
