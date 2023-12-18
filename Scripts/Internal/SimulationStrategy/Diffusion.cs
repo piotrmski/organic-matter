@@ -107,7 +107,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             if (lastCellState.Type == CellType.Water)
             {
-                FillMineralsDiffusionDataFromWaterCell(result, lastCellState);
+                result = FillMineralsDiffusionDataFromWaterCell(result, lastCellState);
             }
 
             return result;
@@ -135,7 +135,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     Minerals = source.MineralContent / 5
                 };
             }
-            else if (source.Type == CellType.Water && source.Type == CellType.Soil)
+            else if (source.Type == CellType.Water && destination.Type == CellType.Soil)
             {
                 return new()
                 {
@@ -156,25 +156,31 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             return null;
         }
 
-        private void FillMineralsDiffusionDataFromWaterCell(List<DiffusionSubstanceData> result, CellData source)
+        private List<DiffusionSubstanceData> FillMineralsDiffusionDataFromWaterCell(List<DiffusionSubstanceData> neighbors, CellData source)
         {
+            List<DiffusionSubstanceData> result = new();
+
             int remainingMinerals = source.MineralContent;
             int i = 0;
 
-            result.ForEach(x =>
+            neighbors.ForEach(x =>
             {
-                if (i == result.Count - 1)
+                if (i == neighbors.Count - 1)
                 {
                     x.Minerals = remainingMinerals;
                 }
                 else
                 {
-                    x.Minerals = source.MineralContent / result.Count;
+                    x.Minerals = source.MineralContent / neighbors.Count;
                     remainingMinerals -= x.Minerals;
                 }
 
+                result.Add(x);
+
                 i++;
             });
+
+            return result;
         }
 
         private void AddToListIfNotNull(List<DiffusionSubstanceData> result, DiffusionSubstanceData? value)

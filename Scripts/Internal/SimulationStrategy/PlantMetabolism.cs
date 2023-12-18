@@ -92,15 +92,20 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private void ConsumeEnergyOrDie(ref CellData cell, int x, int y)
         {
-            //if (cell.AtpEnergy > 0)
-            //{
-            //    cell.AtpEnergy -= _simulationState.Parameters.PlantEnergyConsumptionPerTick;
-            //}
-            //else
-            //{
-            //    cell.Type = CellType.Soil;
-            //    _simulationState.RemoveCellConnections(x, y);
-            //}
+            int energyToConsume = cell.TicksSinceSynthesis > 1000 && (cell.TicksSinceSynthesis % 16) == 0 ? 1 : 0;
+
+            if (energyToConsume > cell.EnergyContent)
+            {
+                cell.Type = CellType.Water;
+                cell.MineralContent = _simulationState.Parameters.EnergyToSynthesizePlantCell + cell.MineralContent + cell.EnergyContent + cell.WasteContent;
+                cell.EnergyContent = 0;
+                cell.WasteContent = 0;
+            }
+            else
+            {
+                cell.EnergyContent -= energyToConsume;
+                cell.WasteContent += energyToConsume;
+            }
         }
 
         private static void IncrementCounters(ref CellData cell)

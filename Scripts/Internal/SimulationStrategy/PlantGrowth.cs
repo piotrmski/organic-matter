@@ -79,7 +79,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool IsGrowthDesired(CellData cell)
         {
-            return true;
+            return cell.EnergyContent >= 2 * _simulationState.Parameters.EnergyToSynthesizePlantCell;
         }
 
         private int GetNumberOfConnections(Direction connections)

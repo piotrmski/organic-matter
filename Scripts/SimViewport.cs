@@ -111,14 +111,14 @@ public partial class SimViewport : TextureRect
 
 		int mineralSum = 0;
 		int energySum = 0;
-        int celluloseSum = 0;
-        int wasteSum = 0;
+		int celluloseSum = 0;
+		int wasteSum = 0;
 
 		_simulation.SimulationState.ForEachCell((ref CellData cell) =>
 		{
-            mineralSum += cell.MineralContent;
-            energySum += cell.EnergyContent;
-            wasteSum += cell.WasteContent;
+			mineralSum += cell.MineralContent;
+			energySum += cell.EnergyContent;
+			wasteSum += cell.WasteContent;
 			celluloseSum += cell.IsPlant() || cell.Type == CellType.Soil ? _simulation.SimulationState.Parameters.EnergyToSynthesizePlantCell : 0;
 		});
 
@@ -128,7 +128,7 @@ public partial class SimViewport : TextureRect
 			$"Minerals as plant structure = {celluloseSum}\n\n" +
 			$"Total minerals = {mineralSum + energySum + celluloseSum + wasteSum}\n\n";
 
-        if (_hoveredCell != null)
+		if (_hoveredCell != null)
 		{
 			_debugLabel1.Text += $"X = {_hoveredCell.Value.X} Y = {_hoveredCell.Value.Y}\n" +
 				$"{_simulation.SimulationState.CellMatrix[_hoveredCell.Value.X, _hoveredCell.Value.Y]}";
@@ -142,8 +142,8 @@ public partial class SimViewport : TextureRect
 			0 => new DefaultRenderer(_simulation.SimulationState),
 			1 => new MineralsRenderer(_simulation.SimulationState),
 			2 => new EnergyRenderer(_simulation.SimulationState),
-            3 => new WasteRenderer(_simulation.SimulationState),
-            4 => new PhotosynthesisRenderer(_simulation.SimulationState),
+			3 => new WasteRenderer(_simulation.SimulationState),
+			4 => new PhotosynthesisRenderer(_simulation.SimulationState),
 			_ => new AgeRenderer(_simulation.SimulationState),
 		};
 	}
