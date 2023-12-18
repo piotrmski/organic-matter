@@ -8,7 +8,7 @@ namespace Organicmatter.Scripts.Internal.Model
         None = 0,
         Left = 1 << 0,
         Right = 1 << 1,
-        Bottom = 1 << 2,
-        Top = 1 << 3
+        Down = 1 << 2,
+        Up = 1 << 3
     }
 }

@@ -36,12 +36,12 @@
                 CellHorizontalConnections[x, y] = true;
             }
 
-            if (connection.HasFlag(Direction.Bottom))
+            if (connection.HasFlag(Direction.Down))
             {
                 CellVerticalConnections[x, y - 1] = true;
             }
 
-            if (connection.HasFlag(Direction.Top))
+            if (connection.HasFlag(Direction.Up))
             {
                 CellVerticalConnections[x, y] = true;
             }
@@ -61,8 +61,8 @@
 
             if (x > 0 && CellHorizontalConnections[x - 1, y]) result |= Direction.Left;
             if (x < _spaceWidth - 1 && CellHorizontalConnections[x, y]) result |= Direction.Right;
-            if (y > 0 && CellVerticalConnections[x, y - 1]) result |= Direction.Bottom;
-            if (y < _spaceHeight - 1 && CellVerticalConnections[x, y]) result |= Direction.Top;
+            if (y > 0 && CellVerticalConnections[x, y - 1]) result |= Direction.Down;
+            if (y < _spaceHeight - 1 && CellVerticalConnections[x, y]) result |= Direction.Up;
 
             return result;
         }

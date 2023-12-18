@@ -88,8 +88,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             if (connections.HasFlag(Direction.Left)) ++result;
             if (connections.HasFlag(Direction.Right)) ++result;
-            if (connections.HasFlag(Direction.Bottom)) ++result;
-            if (connections.HasFlag(Direction.Top)) ++result;
+            if (connections.HasFlag(Direction.Down)) ++result;
+            if (connections.HasFlag(Direction.Up)) ++result;
 
             return result;
         }
@@ -119,29 +119,29 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             switch (connections)
             {
-                case Direction.Bottom:
+                case Direction.Down:
                     switch (_rng.Randi() % 3)
                     {
                         case 0:  return Direction.Left;
                         case 1:  return Direction.Right;
-                        default: return Direction.Top;
+                        default: return Direction.Up;
                     }
                 case Direction.Left:
                     switch (_rng.Randi() % 2)
                     {
                         case 0: return Direction.Right;
-                        default: return Direction.Top;
+                        default: return Direction.Up;
                     }
                 case Direction.Right:
                     switch (_rng.Randi() % 2)
                     {
                         case 0: return Direction.Left;
-                        default: return Direction.Top;
+                        default: return Direction.Up;
                     }
-                case Direction.Bottom | Direction.Left: return Direction.Top;
-                case Direction.Bottom | Direction.Right: return Direction.Top;
-                case Direction.Top | Direction.Left: return Direction.Right;
-                case Direction.Top | Direction.Right: return Direction.Left;
+                case Direction.Down | Direction.Left: return Direction.Up;
+                case Direction.Down | Direction.Right: return Direction.Up;
+                case Direction.Up | Direction.Left: return Direction.Right;
+                case Direction.Up | Direction.Right: return Direction.Left;
 
                 default: return Direction.None;
             }
@@ -151,30 +151,30 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             switch (connections)
             {
-                case Direction.Top:
+                case Direction.Up:
                     switch (_rng.Randi() % 3)
                     {
                         case 0: return Direction.Left;
                         case 1: return Direction.Right;
-                        default: return Direction.Bottom;
+                        default: return Direction.Down;
                     }
                 case Direction.Left:
-                case Direction.Top | Direction.Left:
+                case Direction.Up | Direction.Left:
                     switch (_rng.Randi() % 2)
                     {
                         case 0: return Direction.Right;
-                        default: return Direction.Bottom;
+                        default: return Direction.Down;
                     }
                 case Direction.Right:
-                case Direction.Top | Direction.Right:
+                case Direction.Up | Direction.Right:
                     switch (_rng.Randi() % 2)
                     {
                         case 0: return Direction.Left;
-                        default: return Direction.Bottom;
+                        default: return Direction.Down;
                     }
-                case Direction.Bottom | Direction.Left: return Direction.Right;
-                case Direction.Bottom | Direction.Right: return Direction.Left;
-                case Direction.Left | Direction.Right: return Direction.Bottom;
+                case Direction.Down | Direction.Left: return Direction.Right;
+                case Direction.Down | Direction.Right: return Direction.Left;
+                case Direction.Left | Direction.Right: return Direction.Down;
 
                 default: return Direction.None;
             }
@@ -186,7 +186,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             {
                 case Direction.Left: return new(x - 1, y);
                 case Direction.Right: return new(x + 1, y);
-                case Direction.Bottom: return new(x, y - 1);
+                case Direction.Down: return new(x, y - 1);
                 default: return new(x, y + 1);
             }
         }
@@ -200,6 +200,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             if (_simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type == CellType.Soil)
             {
+                if (type == CellType.PlantGreen && directionOfGrowth != Direction.Up) { return; }
+
                 Vector2I[] displacementPath = _airInSoilSearch.FindPathToNearestAir(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
 
                 if (displacementPath == null) { return; }

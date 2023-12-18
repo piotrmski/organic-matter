@@ -53,7 +53,7 @@ namespace Organicmatter.Scripts.Internal
             SimulationState.CellMatrix[x, 29].Type = CellType.PlantRoot;
             SimulationState.CellMatrix[x, 30].Type = CellType.PlantGreen;
 
-            SimulationState.AddCellConnections(x, 29, Direction.Top);
+            SimulationState.AddCellConnections(x, 29, Direction.Up);
         }
     }
 }

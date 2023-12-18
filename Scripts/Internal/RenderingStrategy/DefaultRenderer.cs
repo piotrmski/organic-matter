@@ -63,12 +63,12 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
                 RenderedImage.FillRect(new((x + 1) * _cellSize - 1, displayedY * _cellSize, 1, _cellSize), borderColor);
             }
 
-            if (!connections.HasFlag(Direction.Bottom))
+            if (!connections.HasFlag(Direction.Down))
             {
                 RenderedImage.FillRect(new(x * _cellSize, (displayedY + 1) * _cellSize - 1, _cellSize, 1), borderColor);
             }
 
-            if (!connections.HasFlag(Direction.Top))
+            if (!connections.HasFlag(Direction.Up))
             {
                 RenderedImage.FillRect(new(x * _cellSize, displayedY * _cellSize, _cellSize, 1), borderColor);
             }

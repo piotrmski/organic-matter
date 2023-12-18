@@ -6,7 +6,7 @@
 
         public int DirectLightEnergy = 16;
 
-        public int LightToConvertMineralToEnergy = 500;
+        public int LightToConvertMineralToEnergy = 1000;
 
         public int EnergyToSynthesizePlantCell = 2;
 

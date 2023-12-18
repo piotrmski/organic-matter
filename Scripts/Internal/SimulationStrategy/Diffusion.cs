@@ -97,12 +97,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             if (y > 0)
             {
-                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x, y - 1), connections.HasFlag(Direction.Bottom)));
+                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x, y - 1), connections.HasFlag(Direction.Down)));
             }
 
             if (y < _yMax)
             {
-                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x, y + 1), connections.HasFlag(Direction.Top)));
+                AddToListIfNotNull(result, GetSubstaceToDiffuse(lastCellState, new(x, y + 1), connections.HasFlag(Direction.Up)));
             }
 
             if (lastCellState.Type == CellType.Water)
