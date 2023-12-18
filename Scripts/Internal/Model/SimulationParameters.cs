@@ -10,6 +10,8 @@
 
         public int EnergyToSynthesizePlantCell = 2;
 
+        public int WasteToKillPlantCell = 50;
+
         public SimulationParameters() { }
     }
 }

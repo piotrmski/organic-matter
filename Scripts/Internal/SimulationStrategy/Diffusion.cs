@@ -127,7 +127,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     Minerals = (source.MineralContent - _simulationState.Parameters.MineralsCriticalSoilDistribution) / 5
                 };
             }
-            else if (source.Type == CellType.Soil && destination.IsPlant())
+            else if (source.Type == CellType.Soil && destination.Type == CellType.PlantRoot)
             {
                 return new()
                 {
@@ -135,7 +135,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     Minerals = source.MineralContent / 5
                 };
             }
-            else if (source.Type == CellType.Water && destination.Type == CellType.Soil)
+            else if (source.Type == CellType.Water && (destination.Type == CellType.Soil || destination.Type == CellType.PlantRoot))
             {
                 return new()
                 {

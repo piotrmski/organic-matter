@@ -94,12 +94,14 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             int energyToConsume = cell.TicksSinceSynthesis > 0 && ((cell.TicksSinceSynthesis % 500) == 0) ? 1 : 0;
 
-            if (energyToConsume > cell.EnergyContent)
+            if (cell.EnergyContent < energyToConsume || cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell)
             {
                 cell.Type = CellType.Water;
                 cell.MineralContent = _simulationState.Parameters.EnergyToSynthesizePlantCell + cell.MineralContent + cell.EnergyContent + cell.WasteContent;
                 cell.EnergyContent = 0;
                 cell.WasteContent = 0;
+
+                _simulationState.RemoveCellConnections(x, y);
             }
             else
             {
