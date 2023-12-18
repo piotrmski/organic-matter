@@ -2,11 +2,11 @@
 {
     internal struct SimulationParameters
     {
-        public int MineralsCriticalSoilDistribution = 20;
+        public int MineralsCriticalSoilDistribution = 50;
 
         public int DirectLightEnergy = 16;
 
-        public int LightToConvertMineralToEnergy = 100;
+        public int LightToConvertMineralToEnergy = 500;
 
         public int EnergyToSynthesizePlantCell = 2;
 

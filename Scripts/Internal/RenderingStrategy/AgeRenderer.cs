@@ -11,7 +11,7 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
 
         protected override Color GetCellColor(CellData cell)
         {
-            return _baseColor.Darkened(cell.IsPlant () ? (1000 - cell.TicksSinceSynthesis) / 1000f : 1);
+            return _baseColor.Darkened(cell.IsPlant () ? (2000 - cell.TicksSinceSynthesis) / 2000f : 1);
         }
     }
 }

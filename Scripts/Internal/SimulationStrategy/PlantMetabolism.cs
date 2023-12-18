@@ -92,7 +92,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private void ConsumeEnergyOrDie(ref CellData cell, int x, int y)
         {
-            int energyToConsume = cell.TicksSinceSynthesis > 1000 && (cell.TicksSinceSynthesis % 16) == 0 ? 1 : 0;
+            int energyToConsume = cell.TicksSinceSynthesis > 0 && ((cell.TicksSinceSynthesis % 500) == 0) ? 1 : 0;
 
             if (energyToConsume > cell.EnergyContent)
             {
