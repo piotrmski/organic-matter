@@ -175,13 +175,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private void FillNutrientsDiffusionDataFromWaterCell(DiffusionSubstanceData[] neighbors, CellData source)
         {
-            List<DiffusionSubstanceData> result = new();
-
             int remainingNutrients = source.NutrientContent;
             int remainingEnergy = source.EnergyContent;
             int remainingWaste = source.WasteContent;
 
             int neighborsToDiffuseToCount = neighbors.Count(x => x.ShouldDiffuse);
+            int diffusedToNeighborNumber = 0;
 
             for (int i = 0; i < 4; ++i)
             {
@@ -189,7 +188,9 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
                 if (!x.ShouldDiffuse) { continue; }
 
-                if (i == neighborsToDiffuseToCount - 1)
+                ++diffusedToNeighborNumber;
+
+                if (diffusedToNeighborNumber == neighborsToDiffuseToCount)
                 {
                     x.Nutrients = remainingNutrients;
                     x.Energy = remainingEnergy;
