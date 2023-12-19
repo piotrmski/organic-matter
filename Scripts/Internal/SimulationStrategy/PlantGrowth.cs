@@ -1,7 +1,6 @@
 ﻿using Godot;
 using Organicmatter.Scripts.Internal.Helpers;
 using Organicmatter.Scripts.Internal.Model;
-using System.Net.NetworkInformation;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy
 {

@@ -1,5 +1,4 @@
-﻿using Godot;
-using Organicmatter.Scripts.Internal.Model;
+﻿using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.SimulationStrategy;
 using System.Diagnostics;
 using System.Collections.Generic;

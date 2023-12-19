@@ -1,5 +1,4 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
-using System;
 using System.Threading.Tasks;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy

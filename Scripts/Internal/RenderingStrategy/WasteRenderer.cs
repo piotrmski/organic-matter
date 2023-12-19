@@ -1,6 +1,5 @@
 ﻿using Godot;
 using Organicmatter.Scripts.Internal.Model;
-using System;
 
 namespace Organicmatter.Scripts.Internal.RenderingStrategy
 {
