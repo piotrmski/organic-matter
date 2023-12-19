@@ -1,6 +1,5 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
-using System;
-using Godot;
+using System.Threading.Tasks;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy
 {
@@ -23,7 +22,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         public void Advance()
         {
-            for (int x = 0; x < _spaceWidth; ++x)
+            Parallel.For(0, _spaceWidth, x =>
             {
                 _simulationState.CellMatrix[x, _spaceHeight - 1].LightEnergy =
                     _simulationState.CellMatrix[x, _spaceHeight - 1].Type == CellType.Air
@@ -37,7 +36,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                             ? _simulationState.CellMatrix[x, y + 1].LightEnergy
                             : _simulationState.CellMatrix[x, y + 1].LightEnergy / 2;
                 }
-            }
+            });
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
 using System;
+using System.Threading.Tasks;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy
 {
@@ -30,26 +31,31 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         public void Advance()
         {
-            _simulationState.ForEachCell((ref CellData cell, int x, int y) =>
+            Parallel.For(0, _spaceWidth, x =>
             {
-                IncrementCounters(ref cell);
-
-                if (cell.Type == CellType.Soil)
+                for (int y = 0; y < _spaceHeight; y++)
                 {
-                    ConvertEnergyAndWasteToNutrients(ref cell);
-                    return;
+                    ref CellData cell = ref _simulationState.CellMatrix[x, y];
+
+                    IncrementCounters(ref cell);
+
+                    if (cell.Type == CellType.Soil)
+                    {
+                        ConvertEnergyAndWasteToNutrients(ref cell);
+                        return;
+                    }
+
+                    if (!cell.IsPlant()) { continue; }
+
+                    if (cell.Type == CellType.PlantGreen)
+                    {
+                        TakeInLightEnergy(ref cell, x, y);
+
+                        Photosynthesize(ref cell);
+                    }
+
+                    ConsumeEnergyOrDie(ref cell, x, y);
                 }
-
-                if (!cell.IsPlant()) { return; }
-
-                if (cell.Type == CellType.PlantGreen)
-                {
-                    TakeInLightEnergy(ref cell, x, y);
-
-                    Photosynthesize(ref cell);
-                }
-
-                ConsumeEnergyOrDie(ref cell, x, y);
             });
         }
 
@@ -99,23 +105,13 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool AreConditionsMetForPhotosynthesis(CellData cell)
         {
-            return IsPhotosynthesisPossible(cell) && IsPhotosynthesisDesired(cell);
-        }
-
-        private bool IsPhotosynthesisPossible(CellData cell)
-        {
             return cell.AccumulatedLightEnergy >= _simulationState.Parameters.LightToConvertNutrientToEnergy &&
                 cell.NutrientContent >= 1;
         }
 
-        private bool IsPhotosynthesisDesired(CellData cell)
-        {
-            return true;
-        }
-
         private void ConsumeEnergyOrDie(ref CellData cell, int x, int y)
         {
-            int energyToConsume = cell.TicksSinceSynthesis > 0 && ((cell.TicksSinceSynthesis % 500) == 0) ? 1 : 0;
+            int energyToConsume = cell.TicksSinceSynthesis > 500 && ((cell.TicksSinceSynthesis % 500) == 0) ? 1 : 0;
 
             if (cell.EnergyContent < energyToConsume || cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell)
             {
