@@ -59,7 +59,7 @@ namespace Organicmatter.Scripts.Internal
                 if (y < 30)
                 {
                     cellData.Type = CellType.Soil;
-                    cellData.MineralContent = SimulationState.Parameters.MineralsCriticalSoilDistribution;
+                    cellData.NurtientContent = SimulationState.Parameters.NurtientsCriticalSoilDistribution;
                 }
                 else
                 {

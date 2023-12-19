@@ -41,7 +41,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             _simulationState.ForEachCell((ref CellData cell) =>
             {
-                cell.MineralContent = 0;
+                cell.NurtientContent = 0;
                 cell.EnergyContent = 0;
                 cell.WasteContent = 0;
             });
@@ -52,7 +52,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
                 CellData lastCellState = _lastCellMatrixState[x, y];
 
-                cell.MineralContent += lastCellState.MineralContent;
+                cell.NurtientContent += lastCellState.NurtientContent;
                 cell.EnergyContent += lastCellState.EnergyContent;
                 cell.WasteContent += lastCellState.WasteContent;
 
@@ -62,16 +62,16 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                 {
                     ref CellData destination = ref _simulationState.CellMatrix[diffusionData.Destination.X, diffusionData.Destination.Y];
 
-                    destination.MineralContent += diffusionData.Minerals;
+                    destination.NurtientContent += diffusionData.Nurtients;
                     destination.EnergyContent += diffusionData.Energy;
                     destination.WasteContent += diffusionData.Waste;
 
-                    cell.MineralContent -= diffusionData.Minerals;
+                    cell.NurtientContent -= diffusionData.Nurtients;
                     cell.EnergyContent -= diffusionData.Energy;
                     cell.WasteContent -= diffusionData.Waste;
                 }
 
-                if (cell.Type == CellType.Water && cell.MineralContent == 0)
+                if (cell.Type == CellType.Water && cell.NurtientContent == 0)
                 {
                     cell.Type = CellType.Air;
                 }
@@ -107,7 +107,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             if (lastCellState.Type == CellType.Water)
             {
-                result = FillMineralsDiffusionDataFromWaterCell(result, lastCellState);
+                result = FillNurtientsDiffusionDataFromWaterCell(result, lastCellState);
             }
 
             return result;
@@ -119,12 +119,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             if (source.Type == CellType.Soil && destination.Type == CellType.Soil)
             {
-                if (source.MineralContent <= _simulationState.Parameters.MineralsCriticalSoilDistribution) { return null; }
+                if (source.NurtientContent <= _simulationState.Parameters.NurtientsCriticalSoilDistribution) { return null; }
 
                 return new()
                 {
                     Destination = destinationLocation,
-                    Minerals = (source.MineralContent - _simulationState.Parameters.MineralsCriticalSoilDistribution) / 5
+                    Nurtients = (source.NurtientContent - _simulationState.Parameters.NurtientsCriticalSoilDistribution) / 5
                 };
             }
             else if (source.Type == CellType.Soil && destination.Type == CellType.PlantRoot)
@@ -132,7 +132,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                 return new()
                 {
                     Destination = destinationLocation,
-                    Minerals = source.MineralContent / 5
+                    Nurtients = source.NurtientContent / 5
                 };
             }
             else if (source.Type == CellType.Water && (destination.Type == CellType.Soil || destination.Type == CellType.PlantRoot))
@@ -147,7 +147,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                 return new()
                 {
                     Destination = destinationLocation,
-                    Minerals = source.MineralContent / 4,
+                    Nurtients = source.NurtientContent / 4,
                     Energy = source.EnergyContent / 4,
                     Waste = source.WasteContent / 4
                 };
@@ -156,11 +156,11 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             return null;
         }
 
-        private List<DiffusionSubstanceData> FillMineralsDiffusionDataFromWaterCell(List<DiffusionSubstanceData> neighbors, CellData source)
+        private List<DiffusionSubstanceData> FillNurtientsDiffusionDataFromWaterCell(List<DiffusionSubstanceData> neighbors, CellData source)
         {
             List<DiffusionSubstanceData> result = new();
 
-            int remainingMinerals = source.MineralContent;
+            int remainingNurtients = source.NurtientContent;
             int remainingEnergy = source.EnergyContent;
             int remainingWaste = source.WasteContent;
             int i = 0;
@@ -169,16 +169,16 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             {
                 if (i == neighbors.Count - 1)
                 {
-                    x.Minerals = remainingMinerals;
+                    x.Nurtients = remainingNurtients;
                     x.Energy = remainingEnergy;
                     x.Waste = remainingWaste;
                 }
                 else
                 {
-                    x.Minerals = source.MineralContent / neighbors.Count;
+                    x.Nurtients = source.NurtientContent / neighbors.Count;
                     x.Energy = source.EnergyContent / neighbors.Count;
                     x.Waste = source.WasteContent / neighbors.Count;
-                    remainingMinerals -= x.Minerals;
+                    remainingNurtients -= x.Nurtients;
                     remainingEnergy -= x.Energy;
                     remainingWaste -= x.Waste;
                 }
@@ -203,7 +203,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             public Vector2I Destination;
 
-            public int Minerals;
+            public int Nurtients;
 
             public int Energy;
 

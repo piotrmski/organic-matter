@@ -3,16 +3,16 @@ using Organicmatter.Scripts.Internal.Model;
 
 namespace Organicmatter.Scripts.Internal.RenderingStrategy
 {
-    internal class MineralsRenderer : SolidColorRenderer
+    internal class NurtientsRenderer : SolidColorRenderer
     {
         private Color _baseColor = new(0xee33ffff);
 
-        public MineralsRenderer(SimulationState simulationState) : base(simulationState) { }
+        public NurtientsRenderer(SimulationState simulationState) : base(simulationState) { }
 
         protected override Color GetCellColor(CellData cell)
         {
-            return _baseColor.Darkened((_simulationState.Parameters.MineralsCriticalSoilDistribution - cell.MineralContent) /
-                (float)_simulationState.Parameters.MineralsCriticalSoilDistribution);
+            return _baseColor.Darkened((_simulationState.Parameters.NurtientsCriticalSoilDistribution - cell.NurtientContent) /
+                (float)_simulationState.Parameters.NurtientsCriticalSoilDistribution);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
                 if (cell.Type == CellType.Soil)
                 {
-                    ConvertEnergyAndWasteToMinerals(ref cell);
+                    ConvertEnergyAndWasteToNurtients(ref cell);
                     return;
                 }
 
@@ -53,18 +53,18 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             });
         }
 
-        private void ConvertEnergyAndWasteToMinerals(ref CellData cell)
+        private void ConvertEnergyAndWasteToNurtients(ref CellData cell)
         {
             if (cell.EnergyContent > 0)
             {
-                cell.MineralContent += 1;
+                cell.NurtientContent += 1;
                 cell.EnergyContent -= 1;
                 return;
             }
 
             if (cell.WasteContent > 0)
             {
-                cell.MineralContent += 1;
+                cell.NurtientContent += 1;
                 cell.WasteContent -= 1;
                 return;
             }
@@ -83,7 +83,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             if (y == _yMax) { cell.AccumulatedLightEnergy += _simulationState.Parameters.DirectLightEnergy; }
             else if (_simulationState.CellMatrix[x, y + 1].Type == CellType.Air) { cell.AccumulatedLightEnergy += _simulationState.CellMatrix[x, y + 1].LightEnergy; }
 
-            if (cell.AccumulatedLightEnergy > _simulationState.Parameters.LightToConvertMineralToEnergy) { cell.AccumulatedLightEnergy = _simulationState.Parameters.LightToConvertMineralToEnergy; }
+            if (cell.AccumulatedLightEnergy > _simulationState.Parameters.LightToConvertNurtientToEnergy) { cell.AccumulatedLightEnergy = _simulationState.Parameters.LightToConvertNurtientToEnergy; }
         }
 
         private void Photosynthesize(ref CellData cell)
@@ -91,8 +91,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             if (!AreConditionsMetForPhotosynthesis(cell)) { return; }
 
             cell.EnergyContent += 1;
-            cell.AccumulatedLightEnergy -= _simulationState.Parameters.LightToConvertMineralToEnergy;
-            cell.MineralContent -= 1;
+            cell.AccumulatedLightEnergy -= _simulationState.Parameters.LightToConvertNurtientToEnergy;
+            cell.NurtientContent -= 1;
 
             cell.TicksSinceLastPhotosynthesis = 0;
         }
@@ -104,8 +104,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private bool IsPhotosynthesisPossible(CellData cell)
         {
-            return cell.AccumulatedLightEnergy >= _simulationState.Parameters.LightToConvertMineralToEnergy &&
-                cell.MineralContent >= 1;
+            return cell.AccumulatedLightEnergy >= _simulationState.Parameters.LightToConvertNurtientToEnergy &&
+                cell.NurtientContent >= 1;
         }
 
         private bool IsPhotosynthesisDesired(CellData cell)
@@ -120,7 +120,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             if (cell.EnergyContent < energyToConsume || cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell)
             {
                 cell.Type = CellType.Water;
-                cell.MineralContent += _simulationState.Parameters.EnergyToSynthesizePlantCell;
+                cell.NurtientContent += _simulationState.Parameters.EnergyToSynthesizePlantCell;
 
                 _simulationState.RemoveCellConnections(x, y);
             }

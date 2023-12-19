@@ -103,7 +103,7 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
 
             if (cell.CanDiffuse())
             {
-                return baseColor.Darkened(cell.MineralContent / (4f * _simulationState.Parameters.MineralsCriticalSoilDistribution));
+                return baseColor.Darkened(cell.NurtientContent / (4f * _simulationState.Parameters.NurtientsCriticalSoilDistribution));
             }
 
             return baseColor;
