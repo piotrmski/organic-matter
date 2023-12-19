@@ -139,25 +139,25 @@ public partial class SimViewport : TextureRect
 	{
 		if (_debugLabel1 == null) { return; }
 
-		int nurtientSum = 0;
+		int nutrientSum = 0;
 		int energySum = 0;
 		int celluloseSum = 0;
 		int wasteSum = 0;
 
 		_simulation.SimulationState.ForEachCell((ref CellData cell) =>
 		{
-			nurtientSum += cell.NurtientContent;
+			nutrientSum += cell.NutrientContent;
 			energySum += cell.EnergyContent;
 			wasteSum += cell.WasteContent;
 			celluloseSum += cell.IsPlant() ? _simulation.SimulationState.Parameters.EnergyToSynthesizePlantCell : 0;
 		});
 
 		_debugLabel1.Text = $"Iteration = {_simulation.Iteration}\n\n" + 
-			$"Nurtients in pure form = {nurtientSum}\n" +
-			$"Nurtients as energy = {energySum}\n" +
-			$"Nurtients as waste = {wasteSum}\n" +
-			$"Nurtients as plant structure = {celluloseSum}\n\n" +
-			$"Total nurtients = {nurtientSum + energySum + celluloseSum + wasteSum}\n\n";
+			$"Nutrients in pure form = {nutrientSum}\n" +
+			$"Nutrients as energy = {energySum}\n" +
+			$"Nutrients as waste = {wasteSum}\n" +
+			$"Nutrients as plant structure = {celluloseSum}\n\n" +
+			$"Total nutrients = {nutrientSum + energySum + celluloseSum + wasteSum}\n\n";
 
 		if (_hoveredCell != null)
 		{
@@ -171,7 +171,7 @@ public partial class SimViewport : TextureRect
 		return listIndex switch
 		{
 			0 => new DefaultRenderer(_simulation.SimulationState),
-			1 => new NurtientsRenderer(_simulation.SimulationState),
+			1 => new NutrientsRenderer(_simulation.SimulationState),
 			2 => new EnergyRenderer(_simulation.SimulationState),
 			3 => new WasteRenderer(_simulation.SimulationState),
 			4 => new PhotosynthesisRenderer(_simulation.SimulationState),

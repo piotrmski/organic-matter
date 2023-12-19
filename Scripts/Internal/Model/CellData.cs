@@ -8,7 +8,7 @@
 
         public int AccumulatedLightEnergy;
 
-        public int NurtientContent;
+        public int NutrientContent;
 
         public int EnergyContent;
 
@@ -54,7 +54,7 @@
 
             if (CanDiffuse())
             {
-                result += $"Nurtient content = {NurtientContent}\n";
+                result += $"Nutrient content = {NutrientContent}\n";
                 result += $"Energy content = {EnergyContent}\n";
                 result += $"Waste content = {WasteContent}\n";
             }

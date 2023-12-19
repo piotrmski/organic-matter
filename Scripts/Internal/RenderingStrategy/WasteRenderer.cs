@@ -12,8 +12,8 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
 
         protected override Color GetCellColor(CellData cell)
         {
-            return _baseColor.Darkened((_simulationState.Parameters.NurtientsCriticalSoilDistribution - cell.WasteContent) /
-                (float)_simulationState.Parameters.NurtientsCriticalSoilDistribution);
+            return _baseColor.Darkened((_simulationState.Parameters.NutrientsCriticalSoilDistribution - cell.WasteContent) /
+                (float)_simulationState.Parameters.NutrientsCriticalSoilDistribution);
         }
     }
 }
