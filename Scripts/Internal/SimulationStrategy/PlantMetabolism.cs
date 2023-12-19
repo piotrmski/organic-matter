@@ -42,7 +42,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     if (cell.Type == CellType.Soil)
                     {
                         ConvertEnergyAndWasteToNutrients(ref cell);
-                        return;
+                        continue;
                     }
 
                     if (!cell.IsPlant()) { continue; }
