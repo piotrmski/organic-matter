@@ -199,7 +199,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
         {
             if (_simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type == CellType.Soil)
             {
-                if (type == CellType.PlantGreen && directionOfGrowth != Direction.Up) { return; }
+                if (type == CellType.PlantGreen) { return; }
 
                 Vector2I[] displacementPath = _airInSoilSearch.FindPathToNearestAir(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
 
