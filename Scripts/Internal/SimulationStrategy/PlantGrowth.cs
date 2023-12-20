@@ -1,6 +1,9 @@
 ﻿using Godot;
 using Organicmatter.Scripts.Internal.Helpers;
 using Organicmatter.Scripts.Internal.Model;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Organicmatter.Scripts.Internal.SimulationStrategy
 {
@@ -20,6 +23,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
         private RandomNumberGenerator _rng = new();
 
+        private uint[,] _pregeneratedRandomInts;
+
+        private Vector2I[][] _cellSetsToProcessInParallel;
+
+        private Direction[,] _growthDirection;
+
         public PlantGrowth(SimulationState simulationState)
         {
             _simulationState = simulationState;
@@ -35,35 +44,76 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             _yMax = _spaceHeight - 1;
 
             _rng.Randomize();
+
+            _pregeneratedRandomInts = new uint[_spaceWidth, _spaceHeight];
+
+            _growthDirection = new Direction[_spaceWidth, _spaceHeight];
+
+            _cellSetsToProcessInParallel = GetCellSetsToProcessInParallel();
+        }
+
+        private Vector2I[][] GetCellSetsToProcessInParallel()
+        {
+            List<Vector2I>[] cellSets = new List<Vector2I>[16];
+            for (int i = 0; i < 16; i++) { cellSets[i] = new List<Vector2I>(); }
+
+            _simulationState.ForEachCell((x, y) =>
+            {
+                cellSets[CoordinatesToSetIndex(x, y)].Add(new Vector2I(x, y));
+            });
+
+            return cellSets.Select(x => x.ToArray()).ToArray();
         }
 
         public void Advance()
         {
-            _simulationState.ForEachCell((ref CellData cell, int x, int y) =>
+            PregenerateRandomInts();
+
+            for (int i = 0; i < 16; i++)
             {
-                if (!AreConditionsMetForGrowth(cell)) { return; }
+                Parallel.ForEach(_cellSetsToProcessInParallel[i], cellCoordinates =>
+                {
+                    ref CellData cell = ref _simulationState.CellMatrix[cellCoordinates.X, cellCoordinates.Y];
 
-                Direction connections = _simulationState.GetCellConnections(x, y);
+                    if (!AreConditionsMetForGrowth(cell)) { return; }
 
-                int numberOfConnections = GetNumberOfConnections(connections);
+                    Direction connections = _simulationState.GetCellConnections(cellCoordinates.X, cellCoordinates.Y);
 
-                if (numberOfConnections >= 3) { return; }
+                    int numberOfConnections = GetNumberOfConnections(connections);
 
-                Direction directionToSynthesize = GetRandomDirectionToSynthesize(cell, connections);
+                    if (numberOfConnections >= 3) { return; }
 
-                if (directionToSynthesize == Direction.None) { return; }
+                    Direction directionToSynthesize = GetRandomDirectionToSynthesize(cell, connections, _pregeneratedRandomInts[cellCoordinates.X, cellCoordinates.Y]);
 
-                Vector2I coordinatesToSynthesize = GetNeighborCoordinates(x, y, directionToSynthesize);
+                    if (directionToSynthesize == Direction.None) { return; }
 
-                if (!AreCoordinatesLegal(coordinatesToSynthesize) ||
-                    !_simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].CanPlantSynthesizeHere()) { return; }
+                    Vector2I coordinatesToSynthesize = GetNeighborCoordinates(cellCoordinates, directionToSynthesize);
 
-                int numberOfPlantsInNeighborhood = GetNumberOfPlantsInNeighborhood(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
+                    if (!AreCoordinatesLegal(coordinatesToSynthesize) ||
+                        !_simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].CanPlantSynthesizeHere()) { return; }
 
-                if (numberOfPlantsInNeighborhood > 1) { return; }
+                    int numberOfPlantsInNeighborhood = GetNumberOfPlantsInNeighborhood(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
 
-                SynthesizePlant(coordinatesToSynthesize, cell.Type, x, y, directionToSynthesize);
-            });
+                    if (numberOfPlantsInNeighborhood > 1) { return; }
+
+                    _growthDirection[cellCoordinates.X, cellCoordinates.Y] = directionToSynthesize;
+                });
+
+                Vector2I setOffset = SetIndexToOffset(i);
+
+                for (int x = setOffset.X; x < _spaceWidth; x += 4)
+                {
+                    for (int y = setOffset.Y; y < _spaceHeight; y += 4)
+                    {
+                        if (_growthDirection[x, y] != Direction.None)
+                        {
+                            SynthesizePlant(new(x, y), _growthDirection[x, y]);
+
+                            _growthDirection[x, y] = Direction.None;
+                        }
+                    }
+                }
+            }
         }
 
         private bool AreConditionsMetForGrowth(CellData cell)
@@ -105,34 +155,34 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             return result;
         }
 
-        private Direction GetRandomDirectionToSynthesize(CellData cell, Direction connections)
+        private Direction GetRandomDirectionToSynthesize(CellData cell, Direction connections, uint randomInt)
         {
-            if (cell.Type == CellType.PlantGreen) return GetRandomDirectionToSynthesizeForGreen(connections);
+            if (cell.Type == CellType.PlantGreen) return GetRandomDirectionToSynthesizeForGreen(connections, randomInt);
 
-            if (cell.Type == CellType.PlantRoot) return GetRandomDirectionToSynthesizeForRoot(connections);
+            if (cell.Type == CellType.PlantRoot) return GetRandomDirectionToSynthesizeForRoot(connections, randomInt);
 
             return Direction.None;
         }
 
-        private Direction GetRandomDirectionToSynthesizeForGreen(Direction connections)
+        private Direction GetRandomDirectionToSynthesizeForGreen(Direction connections, uint randomInt)
         {
             switch (connections)
             {
                 case Direction.Down:
-                    switch (_rng.Randi() % 3)
+                    switch (randomInt % 3)
                     {
                         case 0:  return Direction.Left;
                         case 1:  return Direction.Right;
                         default: return Direction.Up;
                     }
                 case Direction.Left:
-                    switch (_rng.Randi() % 2)
+                    switch (randomInt % 2)
                     {
                         case 0: return Direction.Right;
                         default: return Direction.Up;
                     }
                 case Direction.Right:
-                    switch (_rng.Randi() % 2)
+                    switch (randomInt % 2)
                     {
                         case 0: return Direction.Left;
                         default: return Direction.Up;
@@ -146,12 +196,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             }
         }
 
-        private Direction GetRandomDirectionToSynthesizeForRoot(Direction connections)
+        private Direction GetRandomDirectionToSynthesizeForRoot(Direction connections, uint randomInt)
         {
             switch (connections)
             {
                 case Direction.Up:
-                    switch (_rng.Randi() % 3)
+                    switch (randomInt % 3)
                     {
                         case 0: return Direction.Left;
                         case 1: return Direction.Right;
@@ -159,14 +209,14 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                     }
                 case Direction.Left:
                 case Direction.Up | Direction.Left:
-                    switch (_rng.Randi() % 2)
+                    switch (randomInt % 2)
                     {
                         case 0: return Direction.Right;
                         default: return Direction.Down;
                     }
                 case Direction.Right:
                 case Direction.Up | Direction.Right:
-                    switch (_rng.Randi() % 2)
+                    switch (randomInt % 2)
                     {
                         case 0: return Direction.Left;
                         default: return Direction.Down;
@@ -179,14 +229,14 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             }
         }
 
-        private Vector2I GetNeighborCoordinates(int x, int y, Direction directionToSynthesize)
+        private Vector2I GetNeighborCoordinates(Vector2I coordinates, Direction directionToSynthesize)
         {
             switch (directionToSynthesize)
             {
-                case Direction.Left: return new(x - 1, y);
-                case Direction.Right: return new(x + 1, y);
-                case Direction.Down: return new(x, y - 1);
-                default: return new(x, y + 1);
+                case Direction.Left: return coordinates + new Vector2I(-1, 0);
+                case Direction.Right: return coordinates + new Vector2I(1, 0);
+                case Direction.Down: return coordinates + new Vector2I(0, -1);
+                default: return coordinates + new Vector2I(0, 1);
             }
         }
 
@@ -195,8 +245,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
             return coordinates.X >= 0 && coordinates.X < _spaceWidth && coordinates.Y >= 0 && coordinates.Y < _spaceHeight;
         }
 
-        private void SynthesizePlant(Vector2I coordinatesToSynthesize, CellType type, int sourceX, int sourceY, Direction directionOfGrowth)
+        private void SynthesizePlant(Vector2I sourceCoordinates, Direction directionOfGrowth)
         {
+            CellType type = _simulationState.CellMatrix[sourceCoordinates.X, sourceCoordinates.Y].Type;
+
+            Vector2I coordinatesToSynthesize = GetNeighborCoordinates(sourceCoordinates, directionOfGrowth);
+
             if (_simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type == CellType.Soil)
             {
                 if (type == CellType.PlantGreen && directionOfGrowth != Direction.Up) { return; }
@@ -213,14 +267,32 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
 
             _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type = type;
             _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].TicksSinceSynthesis = 0;
-            _simulationState.CellMatrix[sourceX, sourceY].EnergyContent -= _simulationState.Parameters.EnergyToSynthesizePlantCell;
-            _simulationState.AddCellConnections(sourceX, sourceY, directionOfGrowth);
+            _simulationState.CellMatrix[sourceCoordinates.X, sourceCoordinates.Y].EnergyContent -= _simulationState.Parameters.EnergyToSynthesizePlantCell;
+            _simulationState.AddCellConnections(sourceCoordinates.X, sourceCoordinates.Y, directionOfGrowth);
         }
 
         private void SwapCellsByCoordinates(Vector2I a, Vector2I b)
         {
             (_simulationState.CellMatrix[a.X, a.Y], _simulationState.CellMatrix[b.X, b.Y]) =
                 (_simulationState.CellMatrix[b.X, b.Y], _simulationState.CellMatrix[a.X, a.Y]);
+        }
+
+        private void PregenerateRandomInts()
+        {
+            _simulationState.ForEachCell((x, y) =>
+            {
+                _pregeneratedRandomInts[x, y] = _rng.Randi();
+            });
+        }
+
+        private int CoordinatesToSetIndex(int x, int y)
+        {
+            return (x % 4) * 4 + (y % 4);
+        }
+
+        private Vector2I SetIndexToOffset(int index)
+        {
+            return new(index / 4, index % 4);
         }
     }
 }
