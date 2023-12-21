@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Organicmatter.Scripts.Internal.SimulationStep
 {
-    internal class PlantMetabolism : ISimulationStep
+    internal class Metabolism : ISimulationStep
     {
         private int _spaceWidth;
 
@@ -15,7 +15,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private SimulationState _simulationState;
 
-        public PlantMetabolism(SimulationState simulationState)
+        public Metabolism(SimulationState simulationState)
         {
             _simulationState = simulationState;
 
@@ -60,6 +60,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private void ConvertEnergyAndWasteToNutrients(ref CellData cell)
         {
+            if ((cell.TicksSinceSynthesis % _simulationState.Parameters.SoilNutrientReclamationPeriod) > 0) { return; }
+
             if (cell.EnergyContent > 0)
             {
                 cell.NutrientContent += 1;
@@ -110,7 +112,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private void ConsumeEnergyOrDie(ref CellData cell, int x, int y)
         {
-            int energyToConsume = cell.TicksSinceSynthesis > 500 && ((cell.TicksSinceSynthesis % 500) == 0) ? 1 : 0;
+            int energyToConsume = cell.TicksSinceSynthesis > 0 &&
+                ((cell.TicksSinceSynthesis % _simulationState.Parameters.PlantEnergyConsumptionPeriod) == 0) ? 1 : 0;
 
             if (cell.EnergyContent < energyToConsume || cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell)
             {
@@ -128,8 +131,23 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private static void IncrementCounters(ref CellData cell)
         {
-            if (cell.TicksSinceLastPhotosynthesis < int.MaxValue) cell.TicksSinceLastPhotosynthesis += 1;
-            if (cell.TicksSinceSynthesis < int.MaxValue) cell.TicksSinceSynthesis += 1;
+            if (cell.TicksSinceLastPhotosynthesis < int.MaxValue)
+            {
+                cell.TicksSinceLastPhotosynthesis += 1;
+            }
+            else
+            {
+                cell.TicksSinceLastPhotosynthesis /= 2;
+            }
+
+            if (cell.TicksSinceSynthesis < int.MaxValue)
+            {
+                cell.TicksSinceSynthesis += 1;
+            }
+            else
+            {
+                cell.TicksSinceSynthesis /= 2;
+            }
         }
     }
 }

@@ -132,13 +132,15 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
             if (source.Type == CellType.Soil && destination.Type == CellType.Soil)
             {
-                if (source.NutrientContent <= _simulationState.Parameters.NutrientsCriticalSoilDistribution) { return new(); }
-
                 return new()
                 {
                     ShouldDiffuse = true,
                     Destination = destinationLocation,
-                    Nutrients = (source.NutrientContent - _simulationState.Parameters.NutrientsCriticalSoilDistribution) / 5
+                    Nutrients = source.NutrientContent > _simulationState.Parameters.NutrientsCriticalSoilDistribution ?
+                        (source.NutrientContent - _simulationState.Parameters.NutrientsCriticalSoilDistribution) / 5 :
+                        0,
+                    Energy = source.EnergyContent / 5,
+                    Waste = source.WasteContent / 5
                 };
             }
             else if (source.Type == CellType.Soil && destination.Type == CellType.PlantRoot)

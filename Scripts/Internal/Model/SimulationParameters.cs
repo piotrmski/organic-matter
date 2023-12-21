@@ -12,6 +12,10 @@
 
         public int WasteToKillPlantCell = 50;
 
+        public int PlantEnergyConsumptionPeriod = 500;
+
+        public int SoilNutrientReclamationPeriod = 500;
+
         public SimulationParameters() { }
     }
 }

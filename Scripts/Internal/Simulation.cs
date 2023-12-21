@@ -29,7 +29,7 @@ namespace Organicmatter.Scripts.Internal
                 new Diffusion(SimulationState),
                 new PlantGrowth(SimulationState),
                 new Lighting(SimulationState),
-                new PlantMetabolism(SimulationState)
+                new Metabolism(SimulationState)
             };
 
             _stepNames = _steps.Select(x => x.GetType().Name).ToArray();
