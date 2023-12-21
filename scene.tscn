@@ -11,8 +11,10 @@ font_size = 12
 font_size = 12
 
 [node name="Node2D" type="Node2D"]
+metadata/_edit_vertical_guides_ = [1377.0, 1240.0]
+metadata/_edit_horizontal_guides_ = [20.0, 480.0]
 
-[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("_debugLabel1", "_debugLabel2", "_renderModeList", "_simulationSpeedList")]
+[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("_debugLabel1", "_debugLabel2", "_renderModeList", "_simulationSpeedList", "_pauseUnpauseButton", "_stepButton")]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -30,6 +32,8 @@ _debugLabel1 = NodePath("../Label")
 _debugLabel2 = NodePath("../Label2")
 _renderModeList = NodePath("../ModeSelection")
 _simulationSpeedList = NodePath("../SpeedSelection")
+_pauseUnpauseButton = NodePath("../PauseUnpauseButton")
+_stepButton = NodePath("../StepButton")
 
 [node name="Label" type="Label" parent="."]
 offset_left = 5.0
@@ -53,9 +57,9 @@ justification_flags = 160
 
 [node name="ModeSelection" type="ItemList" parent="."]
 offset_left = 1240.0
-offset_top = 268.0
+offset_top = 310.0
 offset_right = 1377.0
-offset_bottom = 438.0
+offset_bottom = 480.0
 focus_mode = 0
 allow_search = false
 auto_height = true
@@ -69,16 +73,16 @@ item_5/text = "Age"
 
 [node name="Label3" type="Label" parent="."]
 offset_left = 1240.0
-offset_top = 237.0
+offset_top = 279.0
 offset_right = 1345.0
-offset_bottom = 260.0
+offset_bottom = 302.0
 text = "Display mode"
 
 [node name="SpeedSelection" type="ItemList" parent="."]
 offset_left = 1240.0
-offset_top = 52.0
+offset_top = 96.0
 offset_right = 1377.0
-offset_bottom = 222.0
+offset_bottom = 266.0
 focus_mode = 0
 allow_search = false
 auto_height = true
@@ -92,7 +96,24 @@ item_5/text = "50x"
 
 [node name="Label4" type="Label" parent="."]
 offset_left = 1240.0
-offset_top = 21.0
+offset_top = 65.0
 offset_right = 1374.0
-offset_bottom = 44.0
+offset_bottom = 88.0
 text = "Simulation speed"
+
+[node name="PauseUnpauseButton" type="Button" parent="."]
+offset_left = 1240.0
+offset_top = 20.0
+offset_right = 1274.0
+offset_bottom = 51.0
+focus_mode = 0
+text = ""
+
+[node name="StepButton" type="Button" parent="."]
+offset_left = 1286.0
+offset_top = 20.0
+offset_right = 1377.0
+offset_bottom = 51.0
+focus_mode = 0
+disabled = true
+text = "Step"

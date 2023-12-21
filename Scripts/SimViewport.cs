@@ -9,6 +9,10 @@ using System;
 
 public partial class SimViewport : TextureRect
 {
+	const string PAUSE_LABEL = "\u0964\u0964";
+
+	const string UNPAUSE_LABEL = "\u25B6";
+	
 	[Export]
 	private int _spaceWidth = 100;
 
@@ -26,6 +30,14 @@ public partial class SimViewport : TextureRect
 
 	[Export]
 	private ItemList _simulationSpeedList;
+
+	[Export]
+	private Button _pauseUnpauseButton;
+
+	[Export]
+	private Button _stepButton;
+
+	private bool _paused;
 
 	private IRenderer _renderer;
 
@@ -48,6 +60,11 @@ public partial class SimViewport : TextureRect
 		Texture = _viewportTexture;
 
 		_renderModeList.ItemSelected += UpdateRendererByListIndex;
+
+		_pauseUnpauseButton.Pressed += TogglePause;
+		_pauseUnpauseButton.Text = PAUSE_LABEL;
+
+        _stepButton.Pressed += StepSimulation;
 
 		_simulationSpeedList.Select(0);
 	}
@@ -90,6 +107,8 @@ public partial class SimViewport : TextureRect
 
 	private void AdvanceSimulationSelectedNumberOfTimes()
 	{
+		if (_paused) { return; }
+
 		int multiplier = GetTickMultiplier();
 		List<SimulationStepExecutionTime[]> executionTimes = new();
 
@@ -100,23 +119,28 @@ public partial class SimViewport : TextureRect
 		}
 		_watch.Stop();
 
-        if (_debugLabel2 != null)
+		if (_debugLabel2 != null)
 		{
-			SimulationStepExecutionTime[] totalExecutionTimes = executionTimes.Aggregate(new SimulationStepExecutionTime[executionTimes[0].Length], (acc, x) =>
-			{
-				for (int j = 0; j < x.Length; j++)
-				{
-					acc[j].StepName = x[j].StepName;
-					acc[j].ExecutionTime += x[j].ExecutionTime;
-				}
-
-				return acc;
-			});
-
-			string debugLabelText = String.Join("", totalExecutionTimes.Select(x => $"{x.StepName}: {x.ExecutionTime.Milliseconds} ms\n"));
-
-			_debugLabel2.Text = debugLabelText + $"\nTotal: {_watch.ElapsedMilliseconds} ms";
+			UpdateExecutionTimesInfo(executionTimes);
 		}
+	}
+
+	private void UpdateExecutionTimesInfo(List<SimulationStepExecutionTime[]> executionTimes)
+	{
+		SimulationStepExecutionTime[] totalExecutionTimes = executionTimes.Aggregate(new SimulationStepExecutionTime[executionTimes[0].Length], (acc, x) =>
+		{
+			for (int j = 0; j < x.Length; j++)
+			{
+				acc[j].StepName = x[j].StepName;
+				acc[j].ExecutionTime += x[j].ExecutionTime;
+			}
+
+			return acc;
+		});
+
+		string debugLabelText = String.Join("", totalExecutionTimes.Select(x => $"{x.StepName}: {x.ExecutionTime.Milliseconds} ms\n"));
+
+		_debugLabel2.Text = debugLabelText + $"\nTotal: {_watch.ElapsedMilliseconds} ms";
 	}
 
 	private int GetTickMultiplier()
@@ -182,5 +206,33 @@ public partial class SimViewport : TextureRect
 		_renderer = GetRendererByListIndex(listIndex);
 
 		_viewportTexture.SetImage(_renderer.RenderedImage);
+	}
+
+	private void StepSimulation()
+	{
+		_watch.Restart();
+		SimulationStepExecutionTime[] executionTime = _simulation.Advance();
+		_watch.Stop();
+
+		if (_debugLabel2 != null)
+		{
+			UpdateExecutionTimesInfo(new() { executionTime });
+		}
+	}
+
+	private void TogglePause()
+	{
+		_paused = !_paused;
+
+		if (_paused)
+		{
+			_pauseUnpauseButton.Text = UNPAUSE_LABEL;
+			_stepButton.Disabled = false;
+		}
+		else
+		{
+			_pauseUnpauseButton.Text = PAUSE_LABEL;
+			_stepButton.Disabled = true;
+		}
 	}
 }
