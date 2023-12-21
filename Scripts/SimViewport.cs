@@ -91,7 +91,7 @@ public partial class SimViewport : TextureRect
 	private void AdvanceSimulationSelectedNumberOfTimes()
 	{
 		int multiplier = GetTickMultiplier();
-		List<TimeSpan[]> executionTimes = new();
+		List<SimulationStepExecutionTime[]> executionTimes = new();
 
 		_watch.Restart();
 		for (int i = 0; i < multiplier; i++)
@@ -100,24 +100,22 @@ public partial class SimViewport : TextureRect
 		}
 		_watch.Stop();
 
-        TimeSpan[] totalExecutionTimes = executionTimes.Aggregate(new TimeSpan[executionTimes[0].Length], (acc, x) =>
+        if (_debugLabel2 != null)
 		{
-			for (int j = 0; j < x.Length; j++)
+			SimulationStepExecutionTime[] totalExecutionTimes = executionTimes.Aggregate(new SimulationStepExecutionTime[executionTimes[0].Length], (acc, x) =>
 			{
-				acc[j] += x[j];
-			}
+				for (int j = 0; j < x.Length; j++)
+				{
+					acc[j].StepName = x[j].StepName;
+					acc[j].ExecutionTime += x[j].ExecutionTime;
+				}
 
-			return acc;
-		});
+				return acc;
+			});
 
-		if (_debugLabel2 != null)
-		{
-			_debugLabel2.Text = $"Gravity: {totalExecutionTimes[0].Milliseconds} ms\n" +
-				$"Diffusion: {totalExecutionTimes[1].Milliseconds} ms\n" +
-				$"PlantGrowth: {totalExecutionTimes[2].Milliseconds} ms\n" +
-				$"Lighting: {totalExecutionTimes[3].Milliseconds} ms\n" +
-				$"PlantMetabolism: {totalExecutionTimes[4].Milliseconds} ms\n\n" +
-				$"Total: {_watch.ElapsedMilliseconds} ms";
+			string debugLabelText = String.Join("", totalExecutionTimes.Select(x => $"{x.StepName}: {x.ExecutionTime.Milliseconds} ms\n"));
+
+			_debugLabel2.Text = debugLabelText + $"\nTotal: {_watch.ElapsedMilliseconds} ms";
 		}
 	}
 

@@ -1,9 +1,9 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
 using System.Threading.Tasks;
 
-namespace Organicmatter.Scripts.Internal.SimulationStrategy
+namespace Organicmatter.Scripts.Internal.SimulationStep
 {
-    internal class PlantMetabolism : ISimulationStrategy
+    internal class PlantMetabolism : ISimulationStep
     {
         private int _spaceWidth;
 

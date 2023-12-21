@@ -1,8 +1,7 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
-using Organicmatter.Scripts.Internal.SimulationStrategy;
+using Organicmatter.Scripts.Internal.SimulationStep;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System;
+using System.Linq;
 
 namespace Organicmatter.Scripts.Internal
 {
@@ -12,7 +11,9 @@ namespace Organicmatter.Scripts.Internal
 
         public int Iteration { get; private set; } = 0;
 
-        private List<ISimulationStrategy> _strategies;
+        private ISimulationStep[] _steps;
+
+        private string[] _stepNames;
 
         private Stopwatch _watch = new();
 
@@ -22,7 +23,7 @@ namespace Organicmatter.Scripts.Internal
 
             PrepareInitialState();
 
-            _strategies = new List<ISimulationStrategy>()
+            _steps = new ISimulationStep[]
             {
                 new Gravity(SimulationState),
                 new Diffusion(SimulationState),
@@ -30,21 +31,23 @@ namespace Organicmatter.Scripts.Internal
                 new Lighting(SimulationState),
                 new PlantMetabolism(SimulationState)
             };
+
+            _stepNames = _steps.Select(x => x.GetType().Name).ToArray();
         }
 
-        public TimeSpan[] Advance()
+        public SimulationStepExecutionTime[] Advance()
         {
-            TimeSpan[] executionTimes = new TimeSpan[_strategies.Count];
-            int i = 0;
+            SimulationStepExecutionTime[] executionTimes = new SimulationStepExecutionTime[_steps.Length];
 
-            _strategies.ForEach(strategy =>
+            for (int i = 0; i < _steps.Length; ++i)
             {
                 _watch.Restart();
-                strategy.Advance();
+                _steps[i].Advance();
                 _watch.Stop();
 
-                executionTimes[i++] = _watch.Elapsed;
-            });
+                executionTimes[i].StepName = _stepNames[i];
+                executionTimes[i].ExecutionTime = _watch.Elapsed;
+            }
 
             ++Iteration;
 

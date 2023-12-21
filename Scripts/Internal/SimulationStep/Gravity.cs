@@ -1,8 +1,8 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
 
-namespace Organicmatter.Scripts.Internal.SimulationStrategy
+namespace Organicmatter.Scripts.Internal.SimulationStep
 {
-    internal class Gravity : ISimulationStrategy
+    internal class Gravity : ISimulationStep
     {
         private int _spaceWidth;
 

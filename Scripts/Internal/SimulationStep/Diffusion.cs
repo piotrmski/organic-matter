@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Organicmatter.Scripts.Internal.SimulationStrategy
+namespace Organicmatter.Scripts.Internal.SimulationStep
 {
-    internal class Diffusion : ISimulationStrategy
+    internal class Diffusion : ISimulationStep
     {
         private int _spaceWidth;
 

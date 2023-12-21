@@ -2,9 +2,9 @@
 using Organicmatter.Scripts.Internal.Helpers;
 using Organicmatter.Scripts.Internal.Model;
 
-namespace Organicmatter.Scripts.Internal.SimulationStrategy
+namespace Organicmatter.Scripts.Internal.SimulationStep
 {
-    internal class PlantGrowth : ISimulationStrategy
+    internal class PlantGrowth : ISimulationStep
     {
         private int _spaceWidth;
 

@@ -1,9 +1,9 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
 using System.Threading.Tasks;
 
-namespace Organicmatter.Scripts.Internal.SimulationStrategy
+namespace Organicmatter.Scripts.Internal.SimulationStep
 {
-    internal class Lighting : ISimulationStrategy
+    internal class Lighting : ISimulationStep
     {
         private int _spaceWidth;
 
@@ -29,7 +29,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStrategy
                         ? _simulationState.Parameters.DirectLightEnergy
                         : _simulationState.Parameters.DirectLightEnergy / 2;
 
-                for (int y = _spaceHeight - 2; y > 0; --y)
+                for (int y = _spaceHeight - 2; y >= 0; --y)
                 {
                     _simulationState.CellMatrix[x, y].LightEnergy =
                         _simulationState.CellMatrix[x, y].Type == CellType.Air
