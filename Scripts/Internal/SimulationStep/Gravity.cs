@@ -1,4 +1,6 @@
 ﻿using Organicmatter.Scripts.Internal.Model;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Organicmatter.Scripts.Internal.SimulationStep
 {
@@ -7,6 +9,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
         private int _spaceWidth;
 
         private int _spaceHeight;
+
+        private List<int>[] _columnsToProcessIndependently;
 
         private SimulationState _simulationState;
 
@@ -17,29 +21,43 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             _spaceWidth = simulationState.CellMatrix.GetLength(0);
 
             _spaceHeight = simulationState.CellMatrix.GetLength(1);
+
+            _columnsToProcessIndependently = new List<int>[3];
+
+            _columnsToProcessIndependently[0] = new();
+            _columnsToProcessIndependently[1] = new();
+            _columnsToProcessIndependently[2] = new();
+
+            for (int x = 0; x < _spaceWidth; ++x)
+            {
+                _columnsToProcessIndependently[x % 3].Add(x);
+            }
         }
 
         public void Advance()
         {
-            for (int x = 0; x < _spaceWidth; ++x)
+            foreach (List<int> columns in _columnsToProcessIndependently)
             {
-                for (int y = 1; y < _spaceHeight; ++y)
+                Parallel.ForEach(columns, x =>
                 {
-                    if (!_simulationState.CellMatrix[x, y].CanFall()) { continue; }
+                    for (int y = 1; y < _spaceHeight; ++y)
+                    {
+                        if (!_simulationState.CellMatrix[x, y].CanFall()) { continue; }
 
-                    if (!IsSolidOnBottom(x, y))
-                    {
-                        Swap(x, y, x, y - 1);
+                        if (!IsSolidOnBottom(x, y))
+                        {
+                            Swap(x, y, x, y - 1);
+                        }
+                        else if (!IsSolidOnBottomLeft(x, y))
+                        {
+                            Swap(x, y, x - 1, y - 1);
+                        }
+                        else if (!IsSolidOnBottomRight(x, y))
+                        {
+                            Swap(x, y, x + 1, y - 1);
+                        }
                     }
-                    else if (!IsSolidOnBottomLeft(x, y))
-                    {
-                        Swap(x, y, x - 1, y - 1);
-                    }
-                    else if (!IsSolidOnBottomRight(x, y))
-                    {
-                        Swap(x, y, x + 1, y - 1);
-                    }
-                }
+                });
             }
         }
 
