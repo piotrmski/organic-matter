@@ -1,4 +1,5 @@
-﻿using Organicmatter.Scripts.Internal.Model;
+﻿using Organicmatter.Scripts.Internal.Helpers;
+using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.SimulationStep;
 using System.Diagnostics;
 using System.Linq;
@@ -21,11 +22,13 @@ namespace Organicmatter.Scripts.Internal
         {
             SimulationState = new SimulationState(spaceWidth, spaceHeight);
 
-            PrepareInitialState();
+            SeedCoordinates seedCoordinates = new();
+
+            PrepareInitialState(seedCoordinates);
 
             _steps = new ISimulationStep[]
             {
-                new Gravity(SimulationState),
+                new Gravity(SimulationState, seedCoordinates),
                 new Diffusion(SimulationState),
                 new PlantGrowth(SimulationState),
                 new Lighting(SimulationState),
@@ -54,7 +57,7 @@ namespace Organicmatter.Scripts.Internal
             return executionTimes;
         }
 
-        private void PrepareInitialState()
+        private void PrepareInitialState(SeedCoordinates seedCoordinates)
         {
             SimulationState.ForEachCell((ref CellData cellData, int x, int y) =>
             {
@@ -72,13 +75,14 @@ namespace Organicmatter.Scripts.Internal
             int x1 = SimulationState.CellMatrix.GetLength(0) / 3;
             int x2 = x1 * 2;
 
-            SimulationState.CellMatrix[x1, 29].Type = CellType.PlantRoot;
-            SimulationState.CellMatrix[x1, 30].Type = CellType.PlantGreen;
-            SimulationState.AddCellConnections(x1, 29, Direction.Up);
+            SimulationState.CellMatrix[x1, 60].Type = CellType.PlantSeed;
+            SimulationState.CellMatrix[x1, 60].EnergyContent = SimulationState.Parameters.EnergyInPlantSeed;
 
-            SimulationState.CellMatrix[x2, 29].Type = CellType.PlantRoot;
-            SimulationState.CellMatrix[x2, 30].Type = CellType.PlantGreen;
-            SimulationState.AddCellConnections(x2, 29, Direction.Up);
+            SimulationState.CellMatrix[x2, 60].Type = CellType.PlantSeed;
+            SimulationState.CellMatrix[x2, 60].EnergyContent = SimulationState.Parameters.EnergyInPlantSeed;
+
+            seedCoordinates.Add(new(x1, 60));
+            seedCoordinates.Add(new(x2, 60));
         }
     }
 }

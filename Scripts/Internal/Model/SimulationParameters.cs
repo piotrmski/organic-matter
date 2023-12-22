@@ -10,6 +10,10 @@
 
         public int EnergyToSynthesizePlantCell = 2;
 
+        public int EnergyToSynthesizeFruitCell = 25;
+
+        public int EnergyInPlantSeed = 50;
+
         public int WasteToKillPlantCell = 50;
 
         public int PlantEnergyConsumptionPeriod = 500;

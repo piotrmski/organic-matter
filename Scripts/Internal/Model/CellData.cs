@@ -35,7 +35,7 @@
 
         public bool IsPlant()
         {
-            return Type == CellType.PlantRoot || Type == CellType.PlantGreen;
+            return Type == CellType.PlantRoot || Type == CellType.PlantGreen || Type == CellType.PlantFruit;
         }
 
         public bool CanPlantSynthesizeHere()

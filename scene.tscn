@@ -107,7 +107,6 @@ offset_top = 20.0
 offset_right = 1274.0
 offset_bottom = 51.0
 focus_mode = 0
-text = ""
 
 [node name="StepButton" type="Button" parent="."]
 offset_left = 1286.0

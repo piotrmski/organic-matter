@@ -6,6 +6,8 @@
         Soil,
         Water,
         PlantRoot,
-        PlantGreen
+        PlantGreen,
+        PlantFruit,
+        PlantSeed
     }
 }

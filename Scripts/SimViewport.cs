@@ -64,7 +64,7 @@ public partial class SimViewport : TextureRect
 		_pauseUnpauseButton.Pressed += TogglePause;
 		_pauseUnpauseButton.Text = PAUSE_LABEL;
 
-        _stepButton.Pressed += StepSimulation;
+		_stepButton.Pressed += StepSimulation;
 
 		_simulationSpeedList.Select(0);
 	}
