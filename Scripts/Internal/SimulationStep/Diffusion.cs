@@ -171,6 +171,15 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                     Waste = source.WasteContent / 4
                 };
             }
+            else if (source.IsPlantCoreStructure() && destination.Type == CellType.PlantFruit && areCellsConnected)
+            {
+                return new()
+                {
+                    ShouldDiffuse = true,
+                    Destination = destinationLocation,
+                    Energy = source.EnergyContent > 0 ? 1 : 0
+                };
+            }
 
             return new();
         }

@@ -10,9 +10,11 @@
 
         public int EnergyInPlantCellStructure = 2;
 
-        public int EnergyToSynthesizeFruitCell = 25;
+        public int EnergyToSynthesizeFruitCell = 20;
 
-        public int EnergyInPlantSeed = 50;
+        public int AgeToSynthesizeFruitCell = 1000;
+
+        public int EnergyInPlantSeed = 250;
 
         public int WasteToKillPlantCell = 50;
 

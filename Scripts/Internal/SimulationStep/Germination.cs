@@ -108,9 +108,14 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private void GrowRootUnderSeed(Vector2I coordinates)
         {
-            _simulationState.CellMatrix[coordinates.X, coordinates.Y - 1].Type = CellType.PlantRoot;
-            _simulationState.CellMatrix[coordinates.X, coordinates.Y - 1].TicksSinceSynthesis = 0;
-            _simulationState.CellMatrix[coordinates.X, coordinates.Y].EnergyContent -= _simulationState.Parameters.EnergyInPlantCellStructure;
+            ref CellData rootCell = ref _simulationState.CellMatrix[coordinates.X, coordinates.Y - 1];
+            ref CellData seedCell = ref _simulationState.CellMatrix[coordinates.X, coordinates.Y];
+
+            rootCell.Type = CellType.PlantRoot;
+            rootCell.TicksSinceSynthesis = 0;
+            rootCell.EnergyContent = (seedCell.EnergyContent - _simulationState.Parameters.EnergyInPlantCellStructure) / 2;
+            seedCell.EnergyContent -= rootCell.EnergyContent + _simulationState.Parameters.EnergyInPlantCellStructure;
+
             _simulationState.AddCellConnections(coordinates.X, coordinates.Y, Direction.Down);
         }
 

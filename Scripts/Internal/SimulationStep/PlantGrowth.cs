@@ -20,9 +20,13 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private RandomNumberGenerator _rng = new();
 
-        public PlantGrowth(SimulationState simulationState)
+        private SpecialCoordinates _specialCoordinates;
+
+        public PlantGrowth(SimulationState simulationState, SpecialCoordinates specialCoordinates)
         {
             _simulationState = simulationState;
+
+            _specialCoordinates = specialCoordinates;
 
             _airInSoilSearch = new(simulationState);
 
@@ -78,12 +82,15 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private bool IsCoreStructureGrowthDesired(CellData cell)
         {
-            return cell.NutrientContent >= _simulationState.Parameters.EnergyInPlantCellStructure / 2;
+            return cell.EnergyContent >= _simulationState.Parameters.EnergyInPlantCellStructure * 2 &&
+                cell.NutrientContent >= _simulationState.Parameters.EnergyInPlantCellStructure / 2;
         }
 
         private bool IsFruitGrowthPossible(CellData cell)
         {
-            return cell.Type == CellType.PlantGreen && cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizeFruitCell;
+            return cell.Type == CellType.PlantGreen &&
+                cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizeFruitCell &&
+                cell.TicksSinceSynthesis >= _simulationState.Parameters.AgeToSynthesizeFruitCell;
         }
 
         private int GetNumberOfConnections(Direction connections)
@@ -213,10 +220,33 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
             ref CellData newCell = ref _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y];
 
+            if (IsFruitGrowthPossible(sourceCell)) 
+            { 
+                SynthesizeFruitCell(ref newCell, ref sourceCell);
+
+                _specialCoordinates.Fruits.Add(coordinatesToSynthesize);
+            }
+            else 
+            {
+                SynthesizePlantCoreStructureCell(ref newCell, ref sourceCell); 
+            }
+
+            _simulationState.AddCellConnections(sourceCoordinates.X, sourceCoordinates.Y, directionOfGrowth);
+        }
+
+        private void SynthesizeFruitCell(ref CellData newCell, ref CellData sourceCell)
+        {
+            newCell.Type = CellType.PlantFruit;
+            newCell.TicksSinceSynthesis = 0;
+            newCell.EnergyContent = (sourceCell.EnergyContent - _simulationState.Parameters.EnergyInPlantCellStructure) / 2;
+            sourceCell.EnergyContent -= newCell.EnergyContent + _simulationState.Parameters.EnergyInPlantCellStructure;
+        }
+
+        private void SynthesizePlantCoreStructureCell(ref CellData newCell, ref CellData sourceCell)
+        {
             newCell.Type = sourceCell.Type;
             newCell.TicksSinceSynthesis = 0;
             sourceCell.EnergyContent -= _simulationState.Parameters.EnergyInPlantCellStructure;
-            _simulationState.AddCellConnections(sourceCoordinates.X, sourceCoordinates.Y, directionOfGrowth);
         }
 
         private bool TryDisplaceSoil(Vector2I coordinatesToSynthesize, CellType type)

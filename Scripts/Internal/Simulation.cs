@@ -30,9 +30,10 @@ namespace Organicmatter.Scripts.Internal
             {
                 new Gravity(SimulationState, specialCoordinates),
                 new Diffusion(SimulationState),
-                new PlantGrowth(SimulationState),
+                new PlantGrowth(SimulationState, specialCoordinates),
                 new Lighting(SimulationState),
                 new Metabolism(SimulationState),
+                new FruitDevelopment(SimulationState, specialCoordinates),
                 new Germination(SimulationState, specialCoordinates),
             };
 

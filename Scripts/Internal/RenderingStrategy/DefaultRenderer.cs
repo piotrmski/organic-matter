@@ -88,10 +88,8 @@ namespace Organicmatter.Scripts.Internal.RenderingStrategy
                     double b = Math.Log2(_simulationState.Parameters.DirectLightEnergy);
                     return baseColor.Darkened((float)((b - a) / (2f * b)));
                 case CellType.PlantSeed:
-                    return new(0x881122ff);
                 case CellType.PlantFruit:
-                    return new Color(0x881122ff).Lightened((_simulationState.Parameters.EnergyInPlantSeed - cell.EnergyContent) /
-                        (float)_simulationState.Parameters.EnergyInPlantSeed);
+                    return new(0x881122ff);
                 case CellType.PlantRoot:
                     baseColor = new(0xddccaaff);
                     break;
