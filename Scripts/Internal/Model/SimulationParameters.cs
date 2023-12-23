@@ -8,7 +8,7 @@
 
         public int LightToConvertNutrientToEnergy = 1000;
 
-        public int EnergyToSynthesizePlantCell = 2;
+        public int EnergyInPlantCellStructure = 2;
 
         public int EnergyToSynthesizeFruitCell = 25;
 

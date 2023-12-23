@@ -171,7 +171,7 @@ public partial class SimViewport : TextureRect
 			nutrientSum += cell.NutrientContent;
 			energySum += cell.EnergyContent;
 			wasteSum += cell.WasteContent;
-			celluloseSum += cell.IsPlant() ? _simulation.SimulationState.Parameters.EnergyToSynthesizePlantCell : 0;
+			celluloseSum += cell.IsPlant() ? _simulation.SimulationState.Parameters.EnergyInPlantCellStructure : 0;
 		});
 
 		_debugLabel1.Text = $"Iteration = {_simulation.Iteration}\n\n" + 

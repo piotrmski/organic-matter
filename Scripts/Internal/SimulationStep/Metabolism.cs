@@ -118,7 +118,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             if (cell.EnergyContent < energyToConsume || cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell)
             {
                 cell.Type = CellType.Water;
-                cell.NutrientContent += _simulationState.Parameters.EnergyToSynthesizePlantCell;
+                cell.NutrientContent += _simulationState.Parameters.EnergyInPlantCellStructure;
 
                 _simulationState.RemoveCellConnections(x, y);
             }

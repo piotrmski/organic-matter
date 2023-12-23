@@ -73,12 +73,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private bool IsGrowthPossible(CellData cell)
         {
-            return cell.IsPlantCoreStructure() && cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizePlantCell;
+            return cell.IsPlantCoreStructure() && cell.EnergyContent >= _simulationState.Parameters.EnergyInPlantCellStructure;
         }
 
         private bool IsGrowthDesired(CellData cell)
         {
-            return cell.NutrientContent >= _simulationState.Parameters.EnergyToSynthesizePlantCell / 2;
+            return cell.NutrientContent >= _simulationState.Parameters.EnergyInPlantCellStructure / 2;
         }
 
         private int GetNumberOfConnections(Direction connections)
@@ -213,7 +213,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
             _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type = type;
             _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].TicksSinceSynthesis = 0;
-            _simulationState.CellMatrix[sourceX, sourceY].EnergyContent -= _simulationState.Parameters.EnergyToSynthesizePlantCell;
+            _simulationState.CellMatrix[sourceX, sourceY].EnergyContent -= _simulationState.Parameters.EnergyInPlantCellStructure;
             _simulationState.AddCellConnections(sourceX, sourceY, directionOfGrowth);
         }
 

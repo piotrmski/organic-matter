@@ -26,11 +26,11 @@ namespace Organicmatter.Scripts.Internal.Helpers
             }
         }
 
-        public void Filter(Func<Vector2I, bool> predicate)
+        public void Delete(Func<Vector2I, bool> predicate)
         {
             for (int i = _list.Count - 1; i >= 0; --i)
             {
-                if (!predicate(_list[i]))
+                if (predicate(_list[i]))
                 {
                     _list.RemoveAt(i);
                 }
