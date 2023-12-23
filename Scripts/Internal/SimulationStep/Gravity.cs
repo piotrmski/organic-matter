@@ -1,6 +1,6 @@
 ﻿using Godot;
-using Organicmatter.Scripts.Internal.Model;
 using Organicmatter.Scripts.Internal.Helpers;
+using Organicmatter.Scripts.Internal.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,13 +18,13 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private RandomNumberGenerator _rng = new();
 
-        private SeedCoordinates _seedCoordinates;
+        private SpecialCoordinates _specialCoordinates;
 
-        public Gravity(SimulationState simulationState, SeedCoordinates seedCoordinates)
+        public Gravity(SimulationState simulationState, SpecialCoordinates specialCoordinates)
         {
             _simulationState = simulationState;
 
-            _seedCoordinates = seedCoordinates;
+            _specialCoordinates = specialCoordinates;
 
             _spaceWidth = simulationState.CellMatrix.GetLength(0);
 
@@ -64,7 +64,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                 });
             }
 
-            _seedCoordinates.Update(seedCoordinates =>
+            _specialCoordinates.Seeds.Update(seedCoordinates =>
             {
                 Vector2I newCoordinates = GetNewSeedCoordinates(seedCoordinates);
 

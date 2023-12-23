@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace Organicmatter.Scripts.Internal.Helpers
+namespace Organicmatter.Scripts.Internal.Model
 {
-    internal class SeedCoordinates
+    internal class CoordinatesList
     {
         private List<Vector2I> _list = new();
-
-        public List<Vector2I> Get() 
-        { 
-            return _list;
-        }
 
         public void Add(Vector2I coordinates)
         {

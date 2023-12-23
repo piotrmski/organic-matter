@@ -12,13 +12,13 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private SimulationState _simulationState;
 
-        private SeedCoordinates _seedCoordinates;
+        private SpecialCoordinates _specialCoordinates;
 
-        public Germination(SimulationState simulationState, SeedCoordinates seedCoordinates)
+        public Germination(SimulationState simulationState, SpecialCoordinates specialCoordinates)
         {
             _simulationState = simulationState;
 
-            _seedCoordinates = seedCoordinates;
+            _specialCoordinates = specialCoordinates;
 
             _spaceWidth = simulationState.CellMatrix.GetLength(0);
 
@@ -27,7 +27,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         public void Advance()
         {
-            _seedCoordinates.Delete(coordinates =>
+            _specialCoordinates.Seeds.Delete(coordinates =>
             {
                 if (CanGerminate(coordinates))
                 {

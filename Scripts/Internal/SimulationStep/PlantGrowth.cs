@@ -62,23 +62,28 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
                 if (numberOfPlantsInNeighborhood > 1) { return; }
 
-                SynthesizePlant(coordinatesToSynthesize, cell.Type, x, y, directionToSynthesize);
+                SynthesizePlantCell(coordinatesToSynthesize, new(x, y), directionToSynthesize);
             });
         }
 
         private bool AreConditionsMetForGrowth(CellData cell)
         {
-            return IsGrowthPossible(cell) && IsGrowthDesired(cell);
+            return IsCoreStructureGrowthPossible(cell) && IsCoreStructureGrowthDesired(cell) || IsFruitGrowthPossible(cell);
         }
 
-        private bool IsGrowthPossible(CellData cell)
+        private bool IsCoreStructureGrowthPossible(CellData cell)
         {
             return cell.IsPlantCoreStructure() && cell.EnergyContent >= _simulationState.Parameters.EnergyInPlantCellStructure;
         }
 
-        private bool IsGrowthDesired(CellData cell)
+        private bool IsCoreStructureGrowthDesired(CellData cell)
         {
             return cell.NutrientContent >= _simulationState.Parameters.EnergyInPlantCellStructure / 2;
+        }
+
+        private bool IsFruitGrowthPossible(CellData cell)
+        {
+            return cell.Type == CellType.PlantGreen && cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizeFruitCell;
         }
 
         private int GetNumberOfConnections(Direction connections)
@@ -195,26 +200,39 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             return coordinates.X >= 0 && coordinates.X < _spaceWidth && coordinates.Y >= 0 && coordinates.Y < _spaceHeight;
         }
 
-        private void SynthesizePlant(Vector2I coordinatesToSynthesize, CellType type, int sourceX, int sourceY, Direction directionOfGrowth)
+        private void SynthesizePlantCell(Vector2I coordinatesToSynthesize, Vector2I sourceCoordinates, Direction directionOfGrowth)
         {
+            ref CellData sourceCell = ref _simulationState.CellMatrix[sourceCoordinates.X, sourceCoordinates.Y];
+
             if (_simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type == CellType.Soil)
             {
-                if (type == CellType.PlantGreen) { return; }
+                bool soilDisplaced = TryDisplaceSoil(coordinatesToSynthesize, sourceCell.Type);
 
-                Vector2I[] displacementPath = _airInSoilSearch.FindPathToNearestAir(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
-
-                if (displacementPath == null) { return; }
-
-                for (int i = displacementPath.Length - 1; i > 0; --i)
-                {
-                    SwapCellsByCoordinates(displacementPath[i], displacementPath[i - 1]);
-                }
+                if (!soilDisplaced) { return; }
             }
 
-            _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].Type = type;
-            _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y].TicksSinceSynthesis = 0;
-            _simulationState.CellMatrix[sourceX, sourceY].EnergyContent -= _simulationState.Parameters.EnergyInPlantCellStructure;
-            _simulationState.AddCellConnections(sourceX, sourceY, directionOfGrowth);
+            ref CellData newCell = ref _simulationState.CellMatrix[coordinatesToSynthesize.X, coordinatesToSynthesize.Y];
+
+            newCell.Type = sourceCell.Type;
+            newCell.TicksSinceSynthesis = 0;
+            sourceCell.EnergyContent -= _simulationState.Parameters.EnergyInPlantCellStructure;
+            _simulationState.AddCellConnections(sourceCoordinates.X, sourceCoordinates.Y, directionOfGrowth);
+        }
+
+        private bool TryDisplaceSoil(Vector2I coordinatesToSynthesize, CellType type)
+        {
+            if (type == CellType.PlantGreen) { return false; }
+
+            Vector2I[] displacementPath = _airInSoilSearch.FindPathToNearestAir(coordinatesToSynthesize.X, coordinatesToSynthesize.Y);
+
+            if (displacementPath == null) { return false; }
+
+            for (int i = displacementPath.Length - 1; i > 0; --i)
+            {
+                SwapCellsByCoordinates(displacementPath[i], displacementPath[i - 1]);
+            }
+
+            return true;
         }
 
         private void SwapCellsByCoordinates(Vector2I a, Vector2I b)

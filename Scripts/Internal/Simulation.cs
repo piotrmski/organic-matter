@@ -22,18 +22,18 @@ namespace Organicmatter.Scripts.Internal
         {
             SimulationState = new SimulationState(spaceWidth, spaceHeight);
 
-            SeedCoordinates seedCoordinates = new();
+            SpecialCoordinates specialCoordinates = new();
 
-            PrepareInitialState(seedCoordinates);
+            PrepareInitialState(specialCoordinates);
 
             _steps = new ISimulationStep[]
             {
-                new Gravity(SimulationState, seedCoordinates),
+                new Gravity(SimulationState, specialCoordinates),
                 new Diffusion(SimulationState),
                 new PlantGrowth(SimulationState),
                 new Lighting(SimulationState),
                 new Metabolism(SimulationState),
-                new Germination(SimulationState, seedCoordinates),
+                new Germination(SimulationState, specialCoordinates),
             };
 
             _stepNames = _steps.Select(x => x.GetType().Name).ToArray();
@@ -58,7 +58,7 @@ namespace Organicmatter.Scripts.Internal
             return executionTimes;
         }
 
-        private void PrepareInitialState(SeedCoordinates seedCoordinates)
+        private void PrepareInitialState(SpecialCoordinates specialCoordinates)
         {
             SimulationState.ForEachCell((ref CellData cellData, int x, int y) =>
             {
@@ -82,8 +82,8 @@ namespace Organicmatter.Scripts.Internal
             SimulationState.CellMatrix[x2, 60].Type = CellType.PlantSeed;
             SimulationState.CellMatrix[x2, 60].EnergyContent = SimulationState.Parameters.EnergyInPlantSeed;
 
-            seedCoordinates.Add(new(x1, 60));
-            seedCoordinates.Add(new(x2, 60));
+            specialCoordinates.Seeds.Add(new(x1, 60));
+            specialCoordinates.Seeds.Add(new(x2, 60));
         }
     }
 }
