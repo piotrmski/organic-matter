@@ -76,15 +76,16 @@ namespace Organicmatter.Scripts.Internal
 
             int x1 = SimulationState.CellMatrix.GetLength(0) / 3;
             int x2 = x1 * 2;
+            int y = 50;
 
-            SimulationState.CellMatrix[x1, 60].Type = CellType.PlantSeed;
-            SimulationState.CellMatrix[x1, 60].EnergyContent = SimulationState.Parameters.EnergyInPlantSeed;
+            SimulationState.CellMatrix[x1, y].Type = CellType.PlantSeed;
+            SimulationState.CellMatrix[x1, y].EnergyContent = SimulationState.Parameters.EnergyInPlantSeed;
 
-            SimulationState.CellMatrix[x2, 60].Type = CellType.PlantSeed;
-            SimulationState.CellMatrix[x2, 60].EnergyContent = SimulationState.Parameters.EnergyInPlantSeed;
+            SimulationState.CellMatrix[x2, y].Type = CellType.PlantSeed;
+            SimulationState.CellMatrix[x2, y].EnergyContent = SimulationState.Parameters.EnergyInPlantSeed;
 
-            specialCoordinates.Seeds.Add(new(x1, 60));
-            specialCoordinates.Seeds.Add(new(x2, 60));
+            specialCoordinates.Seeds.Add(new(x1, y));
+            specialCoordinates.Seeds.Add(new(x2, y));
         }
     }
 }

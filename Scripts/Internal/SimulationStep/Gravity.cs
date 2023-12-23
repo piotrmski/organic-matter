@@ -113,7 +113,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private Vector2I GetNewSeedCoordinates(Vector2I coordinates)
         {
-            Direction directionToFall = GetRandomDirectionForSeedToFall();
+            Direction directionToFall = GetRandomDirectionForSeedToFall(_simulationState.CellMatrix[coordinates.X, coordinates.Y]);
 
             Vector2I neighborCoordinates = GetNeighborCoordinates(coordinates, directionToFall);
 
@@ -126,22 +126,56 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             return coordinates;
         }
 
-        private Direction GetRandomDirectionForSeedToFall()
+        private Direction GetRandomDirectionForSeedToFall(CellData cell)
         {
-            return (_rng.Randi() % 11) switch
+            if (cell.TicksSinceSynthesis < 100)
             {
-                0 => Direction.Down,
-                1 => Direction.Down,
-                2 => Direction.Down | Direction.Left,
-                3 => Direction.Down | Direction.Left,
-                4 => Direction.Down | Direction.Right,
-                5 => Direction.Down | Direction.Right,
-                6 => Direction.Left,
-                7 => Direction.Left | Direction.Up,
-                8 => Direction.Up,
-                9 => Direction.Up | Direction.Right,
-                _ => Direction.Right
-            };
+                return (_rng.Randi() % 11) switch
+                {
+                    0 => Direction.Down,
+                    1 => Direction.Down | Direction.Left,
+                    2 => Direction.Down | Direction.Right,
+                    3 => Direction.Left,
+                    4 => Direction.Left | Direction.Up,
+                    5 => Direction.Left | Direction.Up,
+                    6 => Direction.Up,
+                    7 => Direction.Up,
+                    8 => Direction.Up | Direction.Right,
+                    9 => Direction.Up | Direction.Right,
+                    _ => Direction.Right
+                };
+            }
+            else if (cell.TicksSinceSynthesis < 200)
+            {
+                return (_rng.Randi() % 8) switch
+                {
+                    0 => Direction.Down,
+                    1 => Direction.Down | Direction.Left,
+                    2 => Direction.Down | Direction.Right,
+                    3 => Direction.Left,
+                    4 => Direction.Left | Direction.Up,
+                    5 => Direction.Up,
+                    6 => Direction.Up | Direction.Right,
+                    _ => Direction.Right
+                };
+            }
+            else
+            {
+                return (_rng.Randi() % 11) switch
+                {
+                    0 => Direction.Down,
+                    1 => Direction.Down,
+                    2 => Direction.Down | Direction.Left,
+                    3 => Direction.Down | Direction.Left,
+                    4 => Direction.Down | Direction.Right,
+                    5 => Direction.Down | Direction.Right,
+                    6 => Direction.Left,
+                    7 => Direction.Left | Direction.Up,
+                    8 => Direction.Up,
+                    9 => Direction.Up | Direction.Right,
+                    _ => Direction.Right
+                };
+            }
         }
 
         private Vector2I GetNeighborCoordinates(Vector2I coordinates, Direction direction)
