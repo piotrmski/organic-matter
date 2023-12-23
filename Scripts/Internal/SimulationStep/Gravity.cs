@@ -30,6 +30,13 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
             _spaceHeight = simulationState.CellMatrix.GetLength(1);
 
+            PrepareColumnsToProcessIndependently();
+
+            _rng.Randomize();
+        }
+
+        private void PrepareColumnsToProcessIndependently()
+        {
             _columnsToProcessIndependently = new List<int>[3];
 
             _columnsToProcessIndependently[0] = new();
@@ -40,8 +47,6 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             {
                 _columnsToProcessIndependently[x % 3].Add(x);
             }
-
-            _rng.Randomize();
         }
 
         public void Advance()
@@ -108,7 +113,22 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private Vector2I GetNewSeedCoordinates(Vector2I coordinates)
         {
-            Direction directionToFall = (_rng.Randi() % 11) switch
+            Direction directionToFall = GetRandomDirectionForSeedToFall();
+
+            Vector2I neighborCoordinates = GetNeighborCoordinates(coordinates, directionToFall);
+
+            if (AreCoordinatesValid(neighborCoordinates) &&
+                !_simulationState.CellMatrix[neighborCoordinates.X, neighborCoordinates.Y].IsSolid())
+            {
+                return neighborCoordinates;
+            }
+
+            return coordinates;
+        }
+
+        private Direction GetRandomDirectionForSeedToFall()
+        {
+            return (_rng.Randi() % 11) switch
             {
                 0 => Direction.Down,
                 1 => Direction.Down,
@@ -122,16 +142,6 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                 9 => Direction.Up | Direction.Right,
                 _ => Direction.Right
             };
-
-            Vector2I neighborCoordinates = GetNeighborCoordinates(coordinates, directionToFall);
-
-            if (AreCoordinatesValid(neighborCoordinates) &&
-                !_simulationState.CellMatrix[neighborCoordinates.X, neighborCoordinates.Y].IsSolid())
-            {
-                return neighborCoordinates;
-            }
-
-            return coordinates;
         }
 
         private Vector2I GetNeighborCoordinates(Vector2I coordinates, Direction direction)
