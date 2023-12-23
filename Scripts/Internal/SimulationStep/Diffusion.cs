@@ -160,7 +160,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                     Destination = destinationLocation
                 };
             }
-            else if (source.IsPlant() && destination.IsPlant() && areCellsConnected)
+            else if (source.IsPlantCoreStructure() && destination.IsPlantCoreStructure() && areCellsConnected)
             {
                 return new()
                 {

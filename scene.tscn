@@ -38,7 +38,7 @@ _stepButton = NodePath("../StepButton")
 [node name="Label" type="Label" parent="."]
 offset_left = 5.0
 offset_right = 192.0
-offset_bottom = 378.0
+offset_bottom = 336.0
 label_settings = SubResource("LabelSettings_dyhtb")
 justification_flags = 160
 
@@ -47,7 +47,7 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = 5.0
-offset_top = 350.0
+offset_top = 317.0
 offset_right = 179.0
 offset_bottom = 500.0
 grow_horizontal = 0

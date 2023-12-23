@@ -32,7 +32,8 @@ namespace Organicmatter.Scripts.Internal
                 new Diffusion(SimulationState),
                 new PlantGrowth(SimulationState),
                 new Lighting(SimulationState),
-                new Metabolism(SimulationState)
+                new Metabolism(SimulationState),
+                new Germination(SimulationState, seedCoordinates),
             };
 
             _stepNames = _steps.Select(x => x.GetType().Name).ToArray();

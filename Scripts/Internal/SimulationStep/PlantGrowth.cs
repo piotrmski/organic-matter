@@ -73,7 +73,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private bool IsGrowthPossible(CellData cell)
         {
-            return cell.IsPlant() && cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizePlantCell;
+            return cell.IsPlantCoreStructure() && cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizePlantCell;
         }
 
         private bool IsGrowthDesired(CellData cell)
