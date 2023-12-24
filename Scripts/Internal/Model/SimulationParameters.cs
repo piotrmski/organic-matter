@@ -6,11 +6,11 @@
 
         public int DirectLightEnergy = 16;
 
-        public int LightToConvertNutrientToEnergy = 1000;
+        public int LightToConvertNutrientToEnergy = 500;
 
-        public int EnergyInPlantCellStructure = 2;
+        public int EnergyInPlantCellStructure = 5;
 
-        public int EnergyToSynthesizeFruitCell = 20;
+        public int EnergyToSynthesizeFruitCell = 10;
 
         public int AgeToSynthesizeFruitCell = 1000;
 
@@ -18,9 +18,11 @@
 
         public int WasteToKillPlantCell = 50;
 
-        public int PlantEnergyConsumptionPeriod = 500;
+        public int WasteToKillFruitOrSeed = 10;
 
-        public int SoilNutrientReclamationPeriod = 500;
+        public int PlantEnergyConsumptionPeriod = 1000;
+
+        public int SoilNutrientReclamationPeriod = 1000;
 
         public SimulationParameters() { }
     }

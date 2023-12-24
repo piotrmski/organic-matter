@@ -82,8 +82,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private bool IsCoreStructureGrowthDesired(CellData cell)
         {
-            return cell.EnergyContent >= _simulationState.Parameters.EnergyInPlantCellStructure * 2 &&
-                cell.NutrientContent >= _simulationState.Parameters.EnergyInPlantCellStructure / 2;
+            return cell.Type == CellType.PlantGreen ? cell.EnergyContent >= _simulationState.Parameters.EnergyInPlantCellStructure * 2 : true;
         }
 
         private bool IsFruitGrowthPossible(CellData cell)

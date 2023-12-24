@@ -115,7 +115,10 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             int energyToConsume = cell.TicksSinceSynthesis > 0 &&
                 ((cell.TicksSinceSynthesis % _simulationState.Parameters.PlantEnergyConsumptionPeriod) == 0) ? 1 : 0;
 
-            if (cell.EnergyContent < energyToConsume || cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell)
+            if (cell.EnergyContent < energyToConsume ||
+                cell.WasteContent >= (cell.Type == CellType.PlantSeed || cell.Type == CellType.PlantFruit ?
+                    _simulationState.Parameters.WasteToKillFruitOrSeed :
+                    _simulationState.Parameters.WasteToKillPlantCell))
             {
                 cell.Type = CellType.Water;
                 cell.NutrientContent += _simulationState.Parameters.EnergyInPlantCellStructure;

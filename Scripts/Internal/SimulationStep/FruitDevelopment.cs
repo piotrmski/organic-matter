@@ -22,14 +22,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
         {
             _specialCoordinates.Fruits.Delete(coordinates =>
             {
-                if (IsDetatched(coordinates))
-                {
-                    Die(coordinates);
-
-                    return true;
-                }
-
-                if (CanBecomeSeed(coordinates))
+                if (IsFruitDetatched(coordinates) || IsFruitDeveloped(coordinates))
                 {
                     ConvertToSeed(coordinates);
 
@@ -48,18 +41,12 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             _specialCoordinates.Seeds.Add(coordinates);
         }
 
-        private bool CanBecomeSeed(Vector2I coordinates)
+        private bool IsFruitDeveloped(Vector2I coordinates)
         {
             return _simulationState.CellMatrix[coordinates.X, coordinates.Y].EnergyContent >= _simulationState.Parameters.EnergyInPlantSeed;
         }
 
-        private void Die(Vector2I coordinates)
-        {
-            _simulationState.CellMatrix[coordinates.X, coordinates.Y].Type = CellType.Water;
-            _simulationState.CellMatrix[coordinates.X, coordinates.Y].NutrientContent += _simulationState.Parameters.EnergyInPlantCellStructure;
-        }
-
-        private bool IsDetatched(Vector2I coordinates)
+        private bool IsFruitDetatched(Vector2I coordinates)
         {
             return _simulationState.GetCellConnections(coordinates.X, coordinates.Y) == Direction.None;
         }
