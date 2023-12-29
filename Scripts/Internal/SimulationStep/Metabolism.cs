@@ -1,4 +1,6 @@
-﻿using Organicmatter.Scripts.Internal.Model;
+﻿using Godot;
+using Organicmatter.Scripts.Internal.Helpers;
+using Organicmatter.Scripts.Internal.Model;
 using System.Threading.Tasks;
 
 namespace Organicmatter.Scripts.Internal.SimulationStep
@@ -15,9 +17,13 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
         private SimulationState _simulationState;
 
-        public Metabolism(SimulationState simulationState)
+        private SpecialCoordinates _specialCoordinates;
+
+        public Metabolism(SimulationState simulationState, SpecialCoordinates specialCoordinates)
         {
             _simulationState = simulationState;
+
+            _specialCoordinates = specialCoordinates;
 
             _spaceWidth = simulationState.CellMatrix.GetLength(0);
 
@@ -124,6 +130,9 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                 cell.NutrientContent += _simulationState.Parameters.EnergyInPlantCellStructure;
 
                 _simulationState.RemoveCellConnections(x, y);
+
+                _specialCoordinates.Seeds.Delete(coord => coord == new Vector2I(x, y));
+                _specialCoordinates.Fruits.Delete(coord => coord == new Vector2I(x, y));
             }
             else
             {

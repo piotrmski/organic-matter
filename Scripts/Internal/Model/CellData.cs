@@ -23,11 +23,6 @@
             return Type != CellType.Air;
         }
 
-        public bool CanFall()
-        {
-            return Type == CellType.Soil || Type == CellType.Water;
-        }
-
         public bool CanDiffuse()
         {
             return Type != CellType.Air;

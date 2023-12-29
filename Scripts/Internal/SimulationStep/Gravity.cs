@@ -57,9 +57,11 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                 {
                     for (int y = 1; y < _spaceHeight; ++y)
                     {
-                        if (!_simulationState.CellMatrix[x, y].CanFall()) { continue; }
-
-                        FallSoilOrWater(x, y);
+                        switch (_simulationState.CellMatrix[x, y].Type)
+                        {
+                            case CellType.Soil: FallSoil(x, y); break;
+                            case CellType.Water: FallWater(x, y); break;
+                        }
                     }
                 });
             }
@@ -74,19 +76,32 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
             });
         }
 
-        private void FallSoilOrWater(int x, int y)
+        private bool FallSoil(int x, int y)
         {
             if (!IsSolidOnBottom(x, y))
             {
                 Swap(x, y, x, y - 1);
+                return true;
             }
             else if (!IsSolidOnBottomLeft(x, y))
             {
                 Swap(x, y, x - 1, y - 1);
+                return true;
             }
             else if (!IsSolidOnBottomRight(x, y))
             {
                 Swap(x, y, x + 1, y - 1);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void FallWater(int x, int y)
+        {
+            if (!FallSoil(x, y) && y > 1 && !_simulationState.CellMatrix[x, y - 2].IsSolid())
+            {
+                Swap(x, y, x, y - 2);
             }
         }
 

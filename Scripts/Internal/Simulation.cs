@@ -32,7 +32,7 @@ namespace Organicmatter.Scripts.Internal
                 new Diffusion(SimulationState),
                 new PlantGrowth(SimulationState, specialCoordinates),
                 new Lighting(SimulationState),
-                new Metabolism(SimulationState),
+                new Metabolism(SimulationState, specialCoordinates),
                 new FruitDevelopment(SimulationState, specialCoordinates),
                 new Germination(SimulationState, specialCoordinates),
             };
