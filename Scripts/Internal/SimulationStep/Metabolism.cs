@@ -122,11 +122,11 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                 ((cell.TicksSinceSynthesis % _simulationState.Parameters.PlantEnergyConsumptionPeriod) == 0) ? 1 : 0;
 
             if (cell.EnergyContent < energyToConsume ||
-                cell.WasteContent >= (cell.Type == CellType.PlantSeed || cell.Type == CellType.PlantFruit ?
-                    _simulationState.Parameters.WasteToKillFruitOrSeed :
-                    _simulationState.Parameters.WasteToKillPlantCell))
+                IsCellContentTooToxic(cell) ||
+                IsCellDetached(cell, x, y))
             {
                 cell.Type = CellType.Water;
+                cell.GrowthOrigin = Direction.None;
                 cell.NutrientContent += _simulationState.Parameters.EnergyInPlantCellStructure;
 
                 _simulationState.RemoveCellConnections(x, y);
@@ -139,6 +139,16 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                 cell.EnergyContent -= energyToConsume;
                 cell.WasteContent += energyToConsume;
             }
+        }
+
+        private bool IsCellContentTooToxic(CellData cell)
+        {
+            return cell.WasteContent >= _simulationState.Parameters.WasteToKillPlantCell;
+        }
+
+        private bool IsCellDetached(CellData cell, int x, int y)
+        {
+            return cell.IsPlantCoreStructure() && !_simulationState.GetCellConnections(x, y).HasFlag(cell.GrowthOrigin);
         }
 
         private static void IncrementCounters(ref CellData cell)

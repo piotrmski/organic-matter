@@ -18,6 +18,8 @@
 
         public int TicksSinceLastPhotosynthesis;
 
+        public Direction GrowthOrigin;
+
         public bool IsSolid()
         {
             return Type != CellType.Air;

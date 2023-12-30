@@ -37,6 +37,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
         {
             _simulationState.CellMatrix[coordinates.X, coordinates.Y].Type = CellType.PlantSeed;
             _simulationState.CellMatrix[coordinates.X, coordinates.Y].TicksSinceSynthesis = 0;
+            _simulationState.CellMatrix[coordinates.X, coordinates.Y].GrowthOrigin = Direction.None;
             _simulationState.RemoveCellConnections(coordinates.X, coordinates.Y);
             _specialCoordinates.Seeds.Add(coordinates);
         }

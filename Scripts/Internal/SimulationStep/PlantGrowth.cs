@@ -230,6 +230,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                 SynthesizePlantCoreStructureCell(ref newCell, ref sourceCell); 
             }
 
+            newCell.GrowthOrigin = Opposite(directionOfGrowth);
             _simulationState.AddCellConnections(sourceCoordinates.X, sourceCoordinates.Y, directionOfGrowth);
         }
 
@@ -268,6 +269,19 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
         {
             (_simulationState.CellMatrix[a.X, a.Y], _simulationState.CellMatrix[b.X, b.Y]) =
                 (_simulationState.CellMatrix[b.X, b.Y], _simulationState.CellMatrix[a.X, a.Y]);
+        }
+
+        private static Direction Opposite(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Up: return Direction.Down;
+                case Direction.Down: return Direction.Up;
+                case Direction.Left: return Direction.Right;
+                case Direction.Right: return Direction.Left;
+            }
+
+            return Direction.None;
         }
     }
 }

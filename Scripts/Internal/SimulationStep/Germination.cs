@@ -113,6 +113,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
             rootCell.Type = CellType.PlantRoot;
             rootCell.TicksSinceSynthesis = 0;
+            rootCell.GrowthOrigin = Direction.Up;
             rootCell.EnergyContent = (seedCell.EnergyContent - _simulationState.Parameters.EnergyInPlantCellStructure) / 2;
             seedCell.EnergyContent -= rootCell.EnergyContent + _simulationState.Parameters.EnergyInPlantCellStructure;
 

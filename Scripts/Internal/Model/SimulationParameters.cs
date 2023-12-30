@@ -2,7 +2,9 @@
 {
     internal struct SimulationParameters
     {
-        public int NutrientsCriticalSoilDistribution = 50;
+        public int NutrientsInitialSoilDistribution = 50;
+
+        public int NutrientsCriticalSoilDistribution = 45;
 
         public int DirectLightEnergy = 16;
 
@@ -12,13 +14,11 @@
 
         public int EnergyToSynthesizeFruitCell = 10;
 
-        public int AgeToSynthesizeFruitCell = 1000;
+        public int AgeToSynthesizeFruitCell = 2000;
 
         public int EnergyInPlantSeed = 250;
 
-        public int WasteToKillPlantCell = 50;
-
-        public int WasteToKillFruitOrSeed = 10;
+        public int WasteToKillPlantCell = 10;
 
         public int PlantEnergyConsumptionPeriod = 1000;
 
