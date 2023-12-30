@@ -258,18 +258,19 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
 
             if (displacementPath == null) { return false; }
 
+            Vector2I airCellCoordinates = displacementPath[displacementPath.Length - 1];
+
+            CellData airCell = _simulationState.CellMatrix[airCellCoordinates.X, airCellCoordinates.Y];
+
             for (int i = displacementPath.Length - 1; i > 0; --i)
             {
-                SwapCellsByCoordinates(displacementPath[i], displacementPath[i - 1]);
+                _simulationState.CellMatrix[displacementPath[i].X, displacementPath[i].Y] =
+                    _simulationState.CellMatrix[displacementPath[i - 1].X, displacementPath[i - 1].Y];
             }
 
-            return true;
-        }
+            _simulationState.CellMatrix[displacementPath[0].X, displacementPath[0].Y] = airCell;
 
-        private void SwapCellsByCoordinates(Vector2I a, Vector2I b)
-        {
-            (_simulationState.CellMatrix[a.X, a.Y], _simulationState.CellMatrix[b.X, b.Y]) =
-                (_simulationState.CellMatrix[b.X, b.Y], _simulationState.CellMatrix[a.X, a.Y]);
+            return true;
         }
 
         private static Direction Opposite(Direction direction)
