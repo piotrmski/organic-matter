@@ -14,7 +14,9 @@
 
         public int EnergyToSynthesizeFruitCell = 10;
 
-        public int AgeToSynthesizeFruitCell = 2000;
+        public int MinimumAgeToSynthesizeFruitCell = 2000;
+
+        public int MaximumAgeToSynthesizeFruitCell = 3000;
 
         public int EnergyInPlantSeed = 250;
 

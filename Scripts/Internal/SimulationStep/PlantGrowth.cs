@@ -89,7 +89,8 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
         {
             return cell.Type == CellType.PlantGreen &&
                 cell.EnergyContent >= _simulationState.Parameters.EnergyToSynthesizeFruitCell &&
-                cell.TicksSinceSynthesis >= _simulationState.Parameters.AgeToSynthesizeFruitCell;
+                cell.TicksSinceSynthesis >= _simulationState.Parameters.MinimumAgeToSynthesizeFruitCell &&
+                cell.TicksSinceSynthesis <= _simulationState.Parameters.MaximumAgeToSynthesizeFruitCell;
         }
 
         private int GetNumberOfConnections(Direction connections)
