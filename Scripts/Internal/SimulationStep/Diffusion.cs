@@ -143,7 +143,7 @@ namespace Organicmatter.Scripts.Internal.SimulationStep
                     Waste = source.WasteContent / 5
                 };
             }
-            else if (source.Type == CellType.Soil && destination.Type == CellType.PlantRoot)
+            else if (source.Type == CellType.Soil && destination.Type == CellType.PlantRoot && destination.NutrientContent < source.NutrientContent)
             {
                 return new()
                 {
